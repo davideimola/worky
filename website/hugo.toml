@@ -1,5 +1,5 @@
 baseURL = "https://worky.davideimola.dev"
-title   = "worky"
+title   = "Worky"
 languageCode = "en-us"
 
 enableRobotsTXT = true
@@ -16,11 +16,21 @@ enableGitInfo   = true
   noClasses = false
 
 [params]
-  description = "Build self-contained interactive workshops as a single Go binary"
+  description = "Build self-contained interactive workshops that ship as a single Go binary. Embedded docs, progressive chapter locking, live progress tracking — one file, one command."
+  title       = "Worky"
+  images      = ["/images/og-image.png"]
+
+  [params.search]
+    enable = true
 
   [params.navbar]
     displayTitle = true
-    displayLogo  = false
+    displayLogo  = true
+    [params.navbar.logo]
+      path   = "images/logo.svg"
+      dark   = "images/logo-dark.svg"
+      width  = 80
+      height = 80
 
   [params.footer]
     displayCopyright = true
@@ -38,8 +48,14 @@ enableGitInfo   = true
     pageRef    = "/showcase"
     weight     = 2
   [[menu.main]]
-    name       = "GitHub"
-    url        = "https://github.com/davideimola/worky"
+    name       = "Search"
     weight     = 3
     [menu.main.params]
-      type = "remote"
+      type = "search"
+
+  [[menu.main]]
+    name       = "GitHub"
+    url        = "https://github.com/davideimola/worky"
+    weight     = 4
+    [menu.main.params]
+      icon = "github"

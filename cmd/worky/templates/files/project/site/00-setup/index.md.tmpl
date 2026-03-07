@@ -1,0 +1,42 @@
+# Setup
+
+Welcome to **<% .Name %>**! Complete the steps below, then run `./<% .Slug %> check` to unlock the next chapter.
+
+## Steps
+
+1. Make sure you have all prerequisites installed
+2. Download the workshop binary (or build from source: `go build -o <% .Slug %> .`)
+3. Run the workshop server: `./<% .Slug %> serve --open`
+4. Create a file called `done.txt` in the current directory:
+
+```sh
+touch done.txt
+```
+
+5. Run the check to complete this chapter:
+
+```sh
+./<% .Slug %> check
+```
+
+<details data-type="hint">
+<summary>💡 Hint</summary>
+<div class="details-body">
+
+Make sure you run the commands from the same directory where the binary is located.
+Use `pwd` to confirm your current directory.
+
+</div>
+</details>
+
+<details data-type="solution">
+<summary>✅ Solution</summary>
+<div class="details-body">
+
+```sh
+touch done.txt
+./<% .Slug %> check
+```
+
+</div>
+</details>

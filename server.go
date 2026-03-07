@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/fs"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -14,6 +15,7 @@ import (
 	"time"
 
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/renderer/html"
 )
 
 // sseHub broadcasts update signals to all connected SSE clients.
@@ -138,11 +140,16 @@ type ProgressResponse struct {
 }
 
 func (w *Workshop) newHandler(preview bool) http.Handler {
-	subFS, err := fs.Sub(w.cfg.SiteFS, "site")
-	if err != nil {
-		panic(fmt.Sprintf("failed to sub site FS: %v", err))
+	var subFS fs.FS
+	var fileServer http.Handler
+	if w.cfg.SiteFS != nil {
+		sub, err := fs.Sub(w.cfg.SiteFS, "site")
+		if err != nil {
+			panic(fmt.Sprintf("failed to sub site FS: %v", err))
+		}
+		subFS = sub
+		fileServer = http.FileServer(http.FS(subFS))
 	}
-	fileServer := http.FileServer(http.FS(subFS))
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/progress", w.handleProgress)
@@ -160,14 +167,18 @@ func (w *Workshop) newHandler(preview bool) http.Handler {
 				}
 				cmd := os.Args[0] + " check " + prevID
 				rw.WriteHeader(http.StatusForbidden)
-				fmt.Fprintf(rw, lockedPage, cmd)
+				_, _ = fmt.Fprintf(rw, lockedPage, cmd)
 				return
 			}
 		}
 		if w.serveMD(rw, r, subFS, preview) {
 			return
 		}
-		fileServer.ServeHTTP(rw, r)
+		if fileServer != nil {
+			fileServer.ServeHTTP(rw, r)
+			return
+		}
+		w.serveBuiltinHome(rw, r)
 	})
 
 	return mux
@@ -227,6 +238,15 @@ const mdPageTmpl = `<!DOCTYPE html>
     hr { border: none; border-top: 1px solid #313244; margin: 1.5rem 0; }
     blockquote { border-left: 3px solid #89b4fa; padding: 0.5rem 1rem; color: #a6adc8; margin-bottom: 1rem; background: rgba(137,180,250,0.06); border-radius: 0 4px 4px 0; }
     blockquote p { margin: 0; }
+    details { border-radius: 6px; margin: 1rem 0; overflow: hidden; }
+    details[data-type="hint"] { border: 1px solid #3b82f6; background: rgba(59,130,246,0.08); }
+    details[data-type="solution"] { border: 1px solid #22c55e; background: rgba(34,197,94,0.08); }
+    details summary { list-style: none; padding: 0.65rem 1rem; cursor: pointer; font-weight: 600; user-select: none; display: flex; align-items: center; gap: 0.5rem; }
+    details summary::-webkit-details-marker { display: none; }
+    details[data-type="hint"] summary { color: #93c5fd; }
+    details[data-type="solution"] summary { color: #86efac; }
+    details .details-body { padding: 0.25rem 1rem 0.75rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    details .details-body p:last-child { margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -262,6 +282,9 @@ type mdPageData struct {
 var mdTmpl = template.Must(template.New("md").Parse(mdPageTmpl))
 
 func (w *Workshop) serveMD(rw http.ResponseWriter, r *http.Request, subFS fs.FS, preview bool) bool {
+	if subFS == nil {
+		return false
+	}
 	path := strings.TrimPrefix(r.URL.Path, "/")
 	seg := strings.SplitN(path, "/", 2)[0]
 	if seg == "" {
@@ -279,12 +302,13 @@ func (w *Workshop) serveMD(rw http.ResponseWriter, r *http.Request, subFS fs.FS,
 	}
 
 	var buf bytes.Buffer
-	if err := goldmark.Convert(mdData, &buf); err != nil {
+	md := goldmark.New(goldmark.WithRendererOptions(html.WithUnsafe()))
+	if err := md.Convert(mdData, &buf); err != nil {
 		return false
 	}
 
 	rw.Header().Set("Content-Type", "text/html; charset=utf-8")
-	mdTmpl.Execute(rw, mdPageData{ //nolint:errcheck
+	if err := mdTmpl.Execute(rw, mdPageData{
 		WorkshopName: w.cfg.Name,
 		ChapterID:    chapter.ID,
 		ChapterName:  chapter.Name,
@@ -292,8 +316,100 @@ func (w *Workshop) serveMD(rw http.ResponseWriter, r *http.Request, subFS fs.FS,
 		Chapters:     w.cfg.Chapters,
 		Content:      template.HTML(buf.String()),
 		Preview:      preview,
-	})
+	}); err != nil {
+		log.Printf("worky: failed to render chapter page for %q: %v", seg, err)
+	}
 	return true
+}
+
+const builtinHomeTmpl = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.WorkshopName}}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+           background: #1e1e2e; color: #cdd6f4; min-height: 100vh;
+           display: flex; align-items: flex-start; justify-content: center; padding: 4rem 1rem; }
+    .container { width: 100%; max-width: 640px; }
+    h1 { font-size: 2rem; color: #cba6f7; margin-bottom: 0.5rem; }
+    .subtitle { color: #a6adc8; font-size: 0.95rem; margin-bottom: 2.5rem; }
+    .chapter-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .chapter-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem;
+                    background: #313244; border-radius: 0.75rem; border: 1px solid #45475a;
+                    transition: border-color 0.15s; }
+    .chapter-item.unlocked { border-color: #89b4fa; }
+    .chapter-item.completed { border-color: #a6e3a1; opacity: 0.8; }
+    .chapter-item.locked .chapter-name { color: #6c7086; }
+    .chapter-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .chapter-id { font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+                  letter-spacing: 0.06em; color: #6c7086; margin-bottom: 0.2rem; }
+    .chapter-name { font-size: 1rem; color: #cdd6f4; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚙ {{.WorkshopName}}</h1>
+    <p class="subtitle">Workshop progress</p>
+    <ul class="chapter-list" id="chapter-list">
+      {{range .Chapters}}
+      <li class="chapter-item{{if .Completed}} completed{{else if .Unlocked}} unlocked{{else}} locked{{end}}" data-chapter-id="{{.ID}}">
+        <span class="chapter-icon">{{if .Completed}}✅{{else if .Unlocked}}🔓{{else}}🔒{{end}}</span>
+        <div>
+          <div class="chapter-id">Chapter {{.ID}}</div>
+          <div class="chapter-name">{{.Name}}</div>
+        </div>
+      </li>
+      {{end}}
+    </ul>
+  </div>
+  <script>
+    const es = new EventSource('/api/events');
+    es.onmessage = function() {
+      fetch('/api/progress').then(r => r.json()).then(data => {
+        data.chapters.forEach(ch => {
+          const el = document.querySelector('[data-chapter-id="' + ch.id + '"]');
+          if (!el) return;
+          el.className = 'chapter-item ' + (ch.completed ? 'completed' : ch.unlocked ? 'unlocked' : 'locked');
+          el.querySelector('.chapter-icon').textContent = ch.completed ? '✅' : ch.unlocked ? '🔓' : '🔒';
+        });
+      });
+    };
+  </script>
+</body>
+</html>`
+
+type builtinHomeData struct {
+	WorkshopName string
+	Chapters     []ChapterStatus
+}
+
+var builtinHomeTpl = template.Must(template.New("home").Parse(builtinHomeTmpl))
+
+func (w *Workshop) serveBuiltinHome(rw http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(rw, r)
+		return
+	}
+	state, _ := w.loadProgress()
+	var chapters []ChapterStatus
+	for _, c := range w.cfg.Chapters {
+		cs := ChapterStatus{ID: c.ID, Name: c.Name, Slug: c.Slug}
+		if state != nil {
+			cs.Unlocked = state.IsUnlocked(c.ID)
+			cs.Completed = state.IsCompleted(c.ID)
+		}
+		chapters = append(chapters, cs)
+	}
+	rw.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := builtinHomeTpl.Execute(rw, builtinHomeData{
+		WorkshopName: w.cfg.Name,
+		Chapters:     chapters,
+	}); err != nil {
+		log.Printf("worky: failed to render home page: %v", err)
+	}
 }
 
 func (w *Workshop) handleEvents(rw http.ResponseWriter, r *http.Request) {
@@ -309,7 +425,7 @@ func (w *Workshop) handleEvents(rw http.ResponseWriter, r *http.Request) {
 	ch := w.hub.subscribe()
 	defer w.hub.unsubscribe(ch)
 
-	fmt.Fprintf(rw, "data: connected\n\n")
+	_, _ = fmt.Fprintf(rw, "data: connected\n\n")
 	flusher.Flush()
 
 	for {
@@ -317,7 +433,7 @@ func (w *Workshop) handleEvents(rw http.ResponseWriter, r *http.Request) {
 		case <-r.Context().Done():
 			return
 		case <-ch:
-			fmt.Fprintf(rw, "data: update\n\n")
+			_, _ = fmt.Fprintf(rw, "data: update\n\n")
 			flusher.Flush()
 		}
 	}
@@ -330,7 +446,9 @@ func (w *Workshop) handleChecks(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(rw).Encode(store) //nolint:errcheck
+	if err := json.NewEncoder(rw).Encode(store); err != nil {
+		log.Printf("worky: failed to encode check results: %v", err)
+	}
 }
 
 func (w *Workshop) handleProgress(rw http.ResponseWriter, r *http.Request) {
@@ -362,5 +480,7 @@ func (w *Workshop) handleProgress(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(rw).Encode(resp) //nolint:errcheck
+	if err := json.NewEncoder(rw).Encode(resp); err != nil {
+		log.Printf("worky: failed to encode progress response: %v", err)
+	}
 }

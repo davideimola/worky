@@ -1,6 +1,7 @@
 package worky
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"io/fs"
@@ -8,10 +9,12 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -22,17 +25,20 @@ type Config struct {
 	Name     string            // Workshop display name
 	HomeDir  string            // State directory under home (default: ".worky")
 	Port     int               // Default HTTP port (default: 8080)
-	SiteFS   fs.FS             // Embedded Hugo output (must contain a "site/" subdirectory)
+	SiteFS   fs.FS             // Embedded Hugo output (optional; if nil, a built-in UI is served)
 	Chapters []Chapter
 }
 
 // Workshop is the runnable workshop instance.
 type Workshop struct {
-	cfg Config
-	hub *sseHub
+	cfg       Config
+	hub       *sseHub
+	idxByID   map[string]int // chapter ID → index in cfg.Chapters
+	idxBySlug map[string]int // chapter slug → index in cfg.Chapters
 }
 
 // New creates a new Workshop with the given config, applying defaults.
+// It panics if chapter IDs or slugs are not unique.
 func New(cfg Config) *Workshop {
 	if cfg.HomeDir == "" {
 		cfg.HomeDir = ".worky"
@@ -40,7 +46,19 @@ func New(cfg Config) *Workshop {
 	if cfg.Port == 0 {
 		cfg.Port = 8080
 	}
-	return &Workshop{cfg: cfg, hub: newSSEHub()}
+	idxByID := make(map[string]int, len(cfg.Chapters))
+	idxBySlug := make(map[string]int, len(cfg.Chapters))
+	for i, c := range cfg.Chapters {
+		if _, dup := idxByID[c.ID]; dup {
+			panic(fmt.Sprintf("worky: duplicate chapter ID %q", c.ID))
+		}
+		idxByID[c.ID] = i
+		if _, dup := idxBySlug[c.Slug]; dup {
+			panic(fmt.Sprintf("worky: duplicate chapter slug %q", c.Slug))
+		}
+		idxBySlug[c.Slug] = i
+	}
+	return &Workshop{cfg: cfg, hub: newSSEHub(), idxByID: idxByID, idxBySlug: idxBySlug}
 }
 
 // Run builds the CLI and executes it.
@@ -87,6 +105,8 @@ func (w *Workshop) serveCmd() *cobra.Command {
 			addr := net.JoinHostPort("", strconv.Itoa(port))
 			url := fmt.Sprintf("http://localhost:%d", port)
 
+			srv := &http.Server{Addr: addr, Handler: handler}
+
 			fmt.Printf("Workshop server starting on %s\n", url)
 
 			go w.watchFiles(cmd.Context())
@@ -98,7 +118,19 @@ func (w *Workshop) serveCmd() *cobra.Command {
 				}()
 			}
 
-			return http.ListenAndServe(addr, handler)
+			quit := make(chan os.Signal, 1)
+			signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+			go func() {
+				<-quit
+				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+				defer cancel()
+				srv.Shutdown(ctx) //nolint:errcheck
+			}()
+
+			if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				return err
+			}
+			return nil
 		},
 	}
 
@@ -112,7 +144,7 @@ func (w *Workshop) serveCmd() *cobra.Command {
 func (w *Workshop) runDetached(port int, open bool) error {
 	conn, err := net.DialTimeout("tcp", fmt.Sprintf("localhost:%d", port), time.Second)
 	if err == nil {
-		conn.Close()
+		_ = conn.Close()
 		fmt.Printf("Workshop server is already running on http://localhost:%d\n", port)
 		return nil
 	}
@@ -134,7 +166,7 @@ func (w *Workshop) runDetached(port int, open bool) error {
 	if err != nil {
 		return fmt.Errorf("failed to create log file: %w", err)
 	}
-	defer logFile.Close()
+	defer func() { _ = logFile.Close() }()
 
 	cmdArgs := []string{"serve", "--port", strconv.Itoa(port)}
 	if open {
@@ -381,7 +413,7 @@ func (w *Workshop) logsCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("failed to open log file: %w", err)
 			}
-			defer f.Close()
+			defer func() { _ = f.Close() }()
 
 			io.Copy(os.Stdout, f) //nolint:errcheck
 			if !follow {

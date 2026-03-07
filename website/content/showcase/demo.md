@@ -6,7 +6,7 @@ The demo workshop is included in the [worky repository](https://github.com/david
 
 ## Run it now
 
-No Hugo, no extra tools — just Go:
+Just Go:
 
 ```sh
 git clone https://github.com/davideimola/worky

@@ -5,7 +5,7 @@ title: Showcase
 Workshops built with worky.
 
 {{< cards >}}
-  {{< card link="demo" title="Worky Demo" subtitle="The demo workshop included in the worky repository. Three chapters, file and environment checks — run it in 30 seconds." icon="play" >}}
+  {{< card link="/showcase/demo" title="Worky Demo" subtitle="The demo workshop included in the worky repository. Three chapters, file and environment checks — run it in 30 seconds." icon="play" >}}
 {{< /cards >}}
 
 ---

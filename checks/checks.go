@@ -1,8 +1,9 @@
 // Package checks provides pre-built check functions for use with worky workshops.
-// Each function returns a func() error suitable for the worky.Check.Run field.
+// Each function returns a func(context.Context) error suitable for the worky.Check.Run field.
 package checks
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net"
@@ -15,8 +16,8 @@ import (
 )
 
 // FileExists returns a check that passes if the file at path exists.
-func FileExists(path string) func() error {
-	return func() error {
+func FileExists(path string) func(context.Context) error {
+	return func(_ context.Context) error {
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			return fmt.Errorf("file %q does not exist", path)
 		}
@@ -25,8 +26,8 @@ func FileExists(path string) func() error {
 }
 
 // DirExists returns a check that passes if the directory at path exists.
-func DirExists(path string) func() error {
-	return func() error {
+func DirExists(path string) func(context.Context) error {
+	return func(_ context.Context) error {
 		info, err := os.Stat(path)
 		if os.IsNotExist(err) {
 			return fmt.Errorf("directory %q does not exist", path)
@@ -42,8 +43,8 @@ func DirExists(path string) func() error {
 }
 
 // FileContains returns a check that passes if the file at path contains text.
-func FileContains(path, text string) func() error {
-	return func() error {
+func FileContains(path, text string) func(context.Context) error {
+	return func(_ context.Context) error {
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("cannot read %q: %w", path, err)
@@ -56,9 +57,13 @@ func FileContains(path, text string) func() error {
 }
 
 // FileMatchesRegex returns a check that passes if the file at path matches pattern.
-func FileMatchesRegex(path, pattern string) func() error {
-	re := regexp.MustCompile(pattern)
-	return func() error {
+// If pattern is not a valid regular expression, the returned check always returns an error.
+func FileMatchesRegex(path, pattern string) func(context.Context) error {
+	re, compileErr := regexp.Compile(pattern)
+	return func(_ context.Context) error {
+		if compileErr != nil {
+			return fmt.Errorf("invalid regex pattern %q: %w", pattern, compileErr)
+		}
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("cannot read %q: %w", path, err)
@@ -71,8 +76,8 @@ func FileMatchesRegex(path, pattern string) func() error {
 }
 
 // EnvVarSet returns a check that passes if the environment variable name is set and non-empty.
-func EnvVarSet(name string) func() error {
-	return func() error {
+func EnvVarSet(name string) func(context.Context) error {
+	return func(_ context.Context) error {
 		if os.Getenv(name) == "" {
 			return fmt.Errorf("environment variable %q is not set", name)
 		}
@@ -81,8 +86,8 @@ func EnvVarSet(name string) func() error {
 }
 
 // EnvVarEquals returns a check that passes if the environment variable name equals value.
-func EnvVarEquals(name, value string) func() error {
-	return func() error {
+func EnvVarEquals(name, value string) func(context.Context) error {
+	return func(_ context.Context) error {
 		got := os.Getenv(name)
 		if got != value {
 			return fmt.Errorf("environment variable %q = %q, want %q", name, got, value)
@@ -92,9 +97,9 @@ func EnvVarEquals(name, value string) func() error {
 }
 
 // CommandSucceeds returns a check that passes if the command exits with code 0.
-func CommandSucceeds(name string, args ...string) func() error {
-	return func() error {
-		cmd := exec.Command(name, args...)
+func CommandSucceeds(name string, args ...string) func(context.Context) error {
+	return func(ctx context.Context) error {
+		cmd := exec.CommandContext(ctx, name, args...)
 		if out, err := cmd.CombinedOutput(); err != nil {
 			msg := strings.TrimSpace(string(out))
 			if msg == "" {
@@ -107,9 +112,9 @@ func CommandSucceeds(name string, args ...string) func() error {
 }
 
 // CommandOutputContains returns a check that passes if the command output contains text.
-func CommandOutputContains(text, name string, args ...string) func() error {
-	return func() error {
-		cmd := exec.Command(name, args...)
+func CommandOutputContains(text, name string, args ...string) func(context.Context) error {
+	return func(ctx context.Context) error {
+		cmd := exec.CommandContext(ctx, name, args...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			msg := strings.TrimSpace(string(out))
@@ -126,26 +131,31 @@ func CommandOutputContains(text, name string, args ...string) func() error {
 }
 
 // PortOpen returns a check that passes if a TCP connection to host:port succeeds within 3 seconds.
-func PortOpen(host string, port int) func() error {
-	return func() error {
+func PortOpen(host string, port int) func(context.Context) error {
+	return func(ctx context.Context) error {
 		addr := net.JoinHostPort(host, fmt.Sprintf("%d", port))
-		conn, err := net.DialTimeout("tcp", addr, 3*time.Second)
+		d := net.Dialer{Timeout: 3 * time.Second}
+		conn, err := d.DialContext(ctx, "tcp", addr)
 		if err != nil {
 			return fmt.Errorf("port %d on %q is not open: %w", port, host, err)
 		}
-		conn.Close()
+		_ = conn.Close()
 		return nil
 	}
 }
 
 // HTTPStatus returns a check that passes if a GET request to url returns expectedStatus.
-func HTTPStatus(url string, expectedStatus int) func() error {
-	return func() error {
-		resp, err := http.Get(url) //nolint:gosec
+func HTTPStatus(url string, expectedStatus int) func(context.Context) error {
+	return func(ctx context.Context) error {
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		if err != nil {
+			return fmt.Errorf("creating request for %q: %w", url, err)
+		}
+		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			return fmt.Errorf("GET %q failed: %w", url, err)
 		}
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		if resp.StatusCode != expectedStatus {
 			return fmt.Errorf("GET %q returned %d, want %d", url, resp.StatusCode, expectedStatus)
 		}
@@ -154,13 +164,17 @@ func HTTPStatus(url string, expectedStatus int) func() error {
 }
 
 // HTTPBodyContains returns a check that passes if the body of a GET request to url contains text.
-func HTTPBodyContains(url, text string) func() error {
-	return func() error {
-		resp, err := http.Get(url) //nolint:gosec
+func HTTPBodyContains(url, text string) func(context.Context) error {
+	return func(ctx context.Context) error {
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		if err != nil {
+			return fmt.Errorf("creating request for %q: %w", url, err)
+		}
+		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			return fmt.Errorf("GET %q failed: %w", url, err)
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return fmt.Errorf("reading body from %q failed: %w", url, err)

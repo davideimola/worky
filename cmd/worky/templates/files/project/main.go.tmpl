@@ -4,6 +4,7 @@ import (
 	"embed"
 
 	"github.com/davideimola/worky"
+	"github.com/davideimola/worky/checks"
 )
 
 //go:embed all:site
@@ -21,7 +22,10 @@ func main() {
 				Name: "Setup",
 				Slug: "00-setup",
 				Checks: []worky.Check{
-					// TODO: add your setup checks here
+					{
+						Description: "done.txt exists in the current directory",
+						Run:         checks.FileExists("done.txt"),
+					},
 				},
 			},
 		},

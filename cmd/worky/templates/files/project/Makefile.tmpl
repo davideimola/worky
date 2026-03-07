@@ -1,15 +1,11 @@
 BINARY = <% .Slug %>
 
-.PHONY: tidy site build serve check status reset release
+.PHONY: tidy build serve check status reset release
 
 tidy:
 	go mod tidy
-	hugo mod tidy
 
-site:
-	hugo
-
-build: site
+build:
 	go build -o bin/$(BINARY) .
 
 serve:

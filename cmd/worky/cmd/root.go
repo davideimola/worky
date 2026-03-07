@@ -5,8 +5,9 @@ import "github.com/spf13/cobra"
 // NewRootCmd builds and returns the root cobra command with all subcommands wired.
 func NewRootCmd() *cobra.Command {
 	root := &cobra.Command{
-		Use:   "worky",
-		Short: "CLI for creating and building worky workshops",
+		Use:     "worky",
+		Short:   "CLI for creating and building worky workshops",
+		Version: Version,
 	}
 
 	root.AddCommand(

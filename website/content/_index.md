@@ -1,5 +1,5 @@
 ---
-title: worky
+title: "Worky — Build Interactive Workshops as a Single Go Binary"
 layout: hextra-home
 ---
 
@@ -44,8 +44,8 @@ layout: hextra-home
     icon="chart-bar"
   >}}
   {{< hextra/feature-card
-    title="Embedded Hugo Site"
-    subtitle="Your docs are a full Hugo site embedded directly in the binary. Write Markdown, get a beautiful docs experience."
+    title="Embedded Site"
+    subtitle="Embed HTML and Markdown files directly in your binary. The server renders Markdown on the fly — no build step, no external tools. Or skip chapter content and use the built-in progress UI when slides live elsewhere."
     icon="document-text"
   >}}
   {{< hextra/feature-card
@@ -55,7 +55,7 @@ layout: hextra-home
   >}}
   {{< hextra/feature-card
     title="CLI Scaffolding"
-    subtitle="worky init scaffolds a new workshop in seconds. worky new chapter adds chapters with the Go snippet ready to copy."
+    subtitle="worky init scaffolds a complete workshop in seconds — site included. worky new chapter adds chapters with the Go snippet ready to copy."
     icon="terminal"
   >}}
 {{< /hextra/feature-grid >}}

@@ -1,8 +1,17 @@
-# worky
+<p align="center">
+  <img src="website/static/images/logo.svg" width="120" alt="worky" />
+</p>
 
-A Go library for building interactive, self-contained workshop tools.
+<h1 align="center">worky</h1>
 
-**The problem:** running a workshop means participants fight setup — missing tools, broken environments, unclear progress. Worky fixes this with a single binary that embeds the full documentation site, locks chapters until checks pass, and shows live status icons in the browser sidebar.
+<p align="center">A Go library for building interactive, self-contained workshop tools.</p>
+
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/davideimola/worky"><img src="https://pkg.go.dev/badge/github.com/davideimola/worky.svg" alt="Go Reference"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License"></a>
+</p>
+
+**The problem:** running a workshop means participants fight setup — missing tools, broken environments, unclear progress. Worky fixes this with a single binary that locks chapters until checks pass and shows live status in the browser.
 
 Participants download one file, run one command, and follow along in their own browser. No Docker, no cloud, no separate web server.
 
@@ -10,7 +19,7 @@ Participants download one file, run one command, and follow along in their own b
 
 ## Try the demo
 
-The `demo/` directory is a fully working workshop you can run right now — no Hugo, no Kubernetes, no extra tools.
+The `demo/` directory is a fully working workshop you can run right now:
 
 ```sh
 cd demo
@@ -41,16 +50,26 @@ Watch the sidebar icons update live in your browser as each chapter unlocks. Run
 
 ## How it works
 
+A workshop is a Go binary that embeds a `site/` directory of HTML and Markdown files:
+
 ```
 your-workshop/
 ├── main.go          # imports worky, wires chapters + checks + embedded site
-├── docs/            # Hugo markdown content
-├── hugo.toml        # Hugo config, imports worky as a Hugo module
-└── site/            # Hugo output — embedded into the binary at build time
+├── site/
+│   ├── index.html           # home page
+│   ├── workshop.css
+│   ├── workshop-progress.js
+│   └── 00-setup/
+│       └── index.md         # chapter content (Markdown, rendered server-side)
+└── go.mod
 ```
 
+The worky server renders `.md` files on the fly and serves `.html` files as-is — no build step, no external tools.
+
+If you prefer external slides (Google Slides, Marp, Reveal.js), skip writing chapter content — the built-in status page shows chapter progress with live 🔒/🔓/✅ icons regardless.
+
 Participants:
-1. Download the binary (or `git clone` + `make setup`)
+1. Download the binary (or `git clone` + `go build`)
 2. Run `./my-workshop serve --open`
 3. Follow along in the browser, run `./my-workshop check` to unlock each chapter
 
@@ -64,15 +83,8 @@ go install github.com/davideimola/worky/cmd/worky@latest
 
 # Scaffold a new workshop
 worky init "My Workshop"
-
-# Set up Hugo modules and Go dependencies
 cd my-workshop
-hugo mod init github.com/yourorg/my-workshop
-hugo mod get github.com/davideimola/worky
-hugo mod get github.com/geekdocs/geekdoc
 go mod tidy
-
-# Start developing
 make serve
 ```
 
@@ -80,14 +92,14 @@ Add more chapters as your workshop grows:
 
 ```sh
 worky new chapter 01 "Hello World"
-# → creates docs/01-hello-world/_index.md
+# → creates site/01-hello-world/index.md
 # → prints the Go snippet to add to main.go
 ```
 
 Build for distribution:
 
 ```sh
-worky build   # hugo + go build
+worky build   # go build
 ```
 
 ---
@@ -130,66 +142,33 @@ func main() {
                     {Description: "Docker is running", Run: myDockerCheck},
                 },
             },
-            {
-                ID:   "01",
-                Name: "Chapter 1",
-                Slug: "01-chapter1",
-                Checks: []worky.Check{
-                    {Description: "Service is healthy", Run: myServiceCheck},
-                },
-            },
         },
     }).Run()
 }
 ```
 
-### 3. Configure Hugo (`hugo.toml`)
+### 3. Write content
 
-```toml
-baseURL    = "/"
-title      = "My Workshop"
-contentDir = "docs"
-publishDir = "site"
-
-[module]
-  [[module.imports]]
-    path = "github.com/davideimola/worky"
-  [[module.imports]]
-    path = "github.com/geekdocs/geekdoc"
-```
-
-worky provides the Hugo layouts, shortcodes, CSS and JS. [geekdoc](https://geekdoc.de) is the recommended theme (required for sidebar status icons).
-
-### 4. Write content
-
-Create markdown files in `docs/`. Use the `details` shortcode for hints and solutions:
+Create `site/00-setup/index.md`:
 
 ```markdown
-{{< details "Hint" >}}
-Try running `kubectl get pods -A` to see what's running.
-{{< /details >}}
+# Setup
 
-{{< details "Solution" >}}
-```yaml
-apiVersion: v1
-kind: Pod
-...
-```
-{{< /details >}}
+Welcome to the workshop! Make sure your environment is ready.
+
+## Steps
+
+1. Start Docker Desktop
+2. Run `./my-workshop check` to verify and unlock the next chapter
 ```
 
-### 5. Build and distribute
+### 4. Build and distribute
 
 ```sh
-# Build the site
-hugo
-
-# Cross-compile the binary
+go build -o bin/my-workshop .
 GOOS=linux  GOARCH=amd64 go build -o bin/my-workshop-linux-amd64 .
 GOOS=darwin GOARCH=arm64 go build -o bin/my-workshop-darwin-arm64 .
 ```
-
-Distribute binaries via GitHub Releases. The site is embedded — no separate web server needed.
 
 ---
 
@@ -208,33 +187,6 @@ If `chapter-id` is omitted, `check` auto-detects the first incomplete unlocked c
 
 ---
 
-## Hugo assets
-
-worky provides these Hugo assets (overlaid on top of your theme):
-
-| Path | Purpose |
-|------|---------|
-| `layouts/partials/head/custom.html` | Injects `workshop.css` and `workshop-progress.js` |
-| `layouts/shortcodes/details.html` | `{{< details >}}` collapsible hint/solution |
-| `static/workshop.css` | Styles for `.ws-details` and `.ws-status-icon` |
-| `static/workshop-progress.js` | Polls `/api/progress`, updates sidebar icons, shows completion banner |
-
-> `workshop-progress.js` targets `a.gdoc-nav__entry` selectors from geekdoc. If you use a different theme, you may need to override `workshop-progress.js` with your own version that matches your theme's sidebar selectors.
-
----
-
 ## Progress storage
 
 Progress is stored in `~/<HomeDir>/progress.json`. The first chapter is always unlocked. Running `check` for a chapter marks it complete and unlocks the next one.
-
----
-
-## Hugo module setup
-
-Initialize the Hugo module in your project once:
-
-```sh
-hugo mod init github.com/acme/my-workshop
-hugo mod get github.com/davideimola/worky
-hugo mod get github.com/geekdocs/geekdoc
-```

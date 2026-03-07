@@ -6,55 +6,59 @@ weight: 1
 ## Prerequisites
 
 - Go 1.21+
-- Hugo extended v0.120+ (for module support)
 
-## Option A: CLI scaffold (recommended)
-
-### 1. Install the CLI
+## 1. Install the CLI
 
 ```sh
 go install github.com/davideimola/worky/cmd/worky@latest
 ```
 
-### 2. Scaffold a new workshop
+See [CLI](/docs/cli) for the full command reference.
+
+## 2. Scaffold a new workshop
 
 ```sh
 worky init "My Workshop"
 cd my-workshop
 ```
 
-This creates:
+Creates:
 
 ```
 my-workshop/
-├── main.go        # Workshop entrypoint with one example chapter
-├── docs/
+├── main.go        # Workshop entrypoint with embed + one example chapter
+├── site/
+│   ├── index.html           # Home page
+│   ├── workshop.css
+│   ├── workshop-progress.js
 │   └── 00-setup/
-│       └── _index.md
-├── hugo.toml      # Hugo config importing worky + geekdoc modules
+│       └── index.md         # Placeholder chapter content
 ├── Makefile       # make serve, make build, make release
 └── go.mod
 ```
 
-### 3. Set up dependencies
+## 3. Install dependencies
+
+`worky init` asks *"Install dependencies now?"* and runs `go mod tidy` automatically if you say yes. If you skipped it:
 
 ```sh
-hugo mod init github.com/yourorg/my-workshop
-hugo mod get github.com/davideimola/worky
-hugo mod get github.com/geekdocs/geekdoc
 go mod tidy
 ```
 
-### 4. Start developing
+## 4. Start developing
 
 ```sh
 make serve
-# → hugo server (watch mode) + go run . serve --open
 ```
+
+Your workshop is live at `http://localhost:8080`. Edit `site/00-setup/index.md` to write chapter content, or add checks to `main.go`. See [Customization](/docs/customization) for site layout and CSS options.
 
 ---
 
-## Option B: Manual setup
+## Manual setup
+
+<details>
+<summary>Without the CLI</summary>
 
 ### 1. Create the Go project
 
@@ -101,29 +105,12 @@ func main() {
 }
 ```
 
-### 3. Configure Hugo (`hugo.toml`)
+### 3. Write content
 
-```toml
-baseURL    = "/"
-title      = "My Workshop"
-contentDir = "docs"
-publishDir = "site"
-
-[module]
-  [[module.imports]]
-    path = "github.com/davideimola/worky"
-  [[module.imports]]
-    path = "github.com/geekdocs/geekdoc"
-```
-
-### 4. Write content
-
-Create `docs/00-setup/_index.md`:
+Create `site/00-setup/index.md`:
 
 ```markdown
----
-title: Setup
----
+# Setup
 
 Welcome to the workshop! Let's make sure your environment is ready.
 
@@ -133,40 +120,15 @@ Welcome to the workshop! Let's make sure your environment is ready.
 2. Run `./my-workshop check` to verify and unlock the next chapter
 ```
 
-Use the `details` shortcode for hints:
-
-```markdown
-{{</* details "Hint" */>}}
-Try running `docker info` to see if Docker is responding.
-{{</* /details */>}}
-```
-
-### 5. Build the docs and run
+### 4. Build and run
 
 ```sh
-# Build Hugo site into site/
-hugo
-
-# Run the workshop server
 go run . serve --open
+# or
+go build -o bin/my-workshop .
 ```
 
----
-
-## Participant experience
-
-Once distributed, participants:
-
-1. Download the binary (or `git clone` + `make setup`)
-2. Run `./my-workshop serve --open`
-3. Follow along in the browser
-4. Run `./my-workshop check` after each chapter to unlock the next one
-
-```sh
-./my-workshop status   # show all chapters with lock/unlock/complete icons
-./my-workshop check    # auto-detect current chapter and validate
-./my-workshop reset    # clear all progress and start over
-```
+</details>
 
 ---
 
@@ -193,3 +155,31 @@ go run . check   # Chapter 01
 echo "# Workshop Complete" > complete.md
 go run . check   # Chapter 02
 ```
+
+---
+
+## Distributing your workshop
+
+`worky init` includes a GitHub Actions workflow (`.github/workflows/release.yml`) that cross-compiles for Linux, macOS, and Windows and publishes binaries to a GitHub Release automatically on every `v*` tag:
+
+```sh
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+To build locally instead:
+
+```sh
+make release   # produces bin/ with binaries for all platforms
+```
+
+Participants download the binary for their platform, run `./my-workshop serve --open`, and use `./my-workshop check` to progress through chapters. See [Runtime commands](/docs/runtime) for the full reference.
+
+---
+
+## What's next
+
+- [Reference](/docs/reference) — `Config`, `Chapter`, and `Check` struct reference
+- [Checks](/docs/reference/checks) — built-in validation functions
+- [CLI](/docs/cli) — `worky init`, `worky new chapter`, `worky build`
+- [Customization](/docs/customization) — site layout, CSS classes, Markdown rendering

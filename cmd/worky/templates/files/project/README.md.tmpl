@@ -4,33 +4,58 @@ A workshop built with [worky](https://github.com/davideimola/worky).
 
 ## For participants
 
-1. Download the binary from the [releases page](../../releases)
-2. Run `./<% .Slug %> serve --open`
-3. Follow along in your browser
-4. Run `./<% .Slug %> check` to unlock each chapter
+### 1. Download the binary
+
+Go to the [releases page](../../releases) and download the binary for your platform.
+
+### 2. Make it executable (macOS / Linux)
+
+```sh
+chmod +x ./<% .Slug %>-*
+```
+
+> **macOS:** if you see *"cannot be opened because the developer cannot be verified"*, right-click the binary in Finder and choose **Open**, or run:
+> ```sh
+> xattr -d com.apple.quarantine ./<% .Slug %>-darwin-*
+> ```
+
+### 3. Start the workshop
+
+```sh
+./<% .Slug %>-<platform> serve --open
+```
+
+Your browser will open automatically. Follow along and complete each chapter.
+
+### 4. Validate and progress
+
+```sh
+./<% .Slug %>-<platform> check     # run checks and unlock the next chapter
+./<% .Slug %>-<platform> status    # see which chapters are complete
+./<% .Slug %>-<platform> reset     # start over from the beginning
+```
+
+---
 
 ## For workshop creators
 
 ### Prerequisites
 
 - Go 1.24+
-- Hugo (extended)
 
 ### Setup
 
 ```sh
-hugo mod init <% .Module %>
-hugo mod get github.com/davideimola/worky
-hugo mod get github.com/geekdocs/geekdoc
 go mod tidy
 ```
 
 ### Development
 
 ```sh
-make serve    # build site and run the workshop
+make serve    # run the workshop locally
 make check    # check current chapter progress
 make status   # show all chapter statuses
+make reset    # reset progress
 ```
 
 ### Build and release
@@ -46,3 +71,5 @@ Or push a tag to trigger the GitHub Actions release workflow:
 git tag v1.0.0
 git push origin v1.0.0
 ```
+
+Built with [worky](https://worky.davideimola.dev) — see the docs for configuration, checks, and customization.

@@ -16,7 +16,7 @@ func TestNewChapter_CreatesMarkdownFile(t *testing.T) {
 		t.Fatalf("newChapter: %v", err)
 	}
 
-	path := filepath.Join(dir, "docs", "01-hello-world", "_index.md")
+	path := filepath.Join(dir, "site", "01-hello-world", "index.md")
 	if _, err := os.Stat(path); err != nil {
 		t.Errorf("expected file %s to exist: %v", path, err)
 	}
@@ -30,7 +30,7 @@ func TestNewChapter_SlugFromName(t *testing.T) {
 		t.Fatalf("newChapter: %v", err)
 	}
 
-	path := filepath.Join(dir, "docs", "02-hello-world", "_index.md")
+	path := filepath.Join(dir, "site", "02-hello-world", "index.md")
 	if _, err := os.Stat(path); err != nil {
 		t.Errorf("expected directory with slug 'hello-world': %v", err)
 	}
@@ -44,12 +44,12 @@ func TestNewChapter_FileContents(t *testing.T) {
 		t.Fatalf("newChapter: %v", err)
 	}
 
-	content, err := os.ReadFile(filepath.Join(dir, "docs", "03-my-chapter", "_index.md"))
+	content, err := os.ReadFile(filepath.Join(dir, "site", "03-my-chapter", "index.md"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !strings.Contains(string(content), `title: "My Chapter"`) {
+	if !strings.Contains(string(content), "# My Chapter") {
 		t.Errorf("expected chapter name in file, got:\n%s", content)
 	}
 }

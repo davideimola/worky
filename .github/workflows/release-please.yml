@@ -1,0 +1,94 @@
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  build-binaries:
+    name: Build Binaries
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            suffix: ""
+            archive: tar.gz
+          - goos: linux
+            goarch: arm64
+            suffix: ""
+            archive: tar.gz
+          - goos: darwin
+            goarch: amd64
+            suffix: ""
+            archive: tar.gz
+          - goos: darwin
+            goarch: arm64
+            suffix: ""
+            archive: tar.gz
+          - goos: windows
+            goarch: amd64
+            suffix: .exe
+            archive: zip
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
+        run: |
+          go build \
+            -ldflags "-X github.com/davideimola/worky/cmd/worky/cmd.Version=${{ needs.release-please.outputs.tag_name }}" \
+            -o worky${{ matrix.suffix }} \
+            ./cmd/worky
+
+      - name: Package (tar.gz)
+        if: matrix.archive == 'tar.gz'
+        run: |
+          ARCHIVE="worky_${{ needs.release-please.outputs.tag_name }}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz"
+          tar czf "$ARCHIVE" worky${{ matrix.suffix }}
+          sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
+          echo "ARCHIVE=$ARCHIVE" >> "$GITHUB_ENV"
+
+      - name: Package (zip)
+        if: matrix.archive == 'zip'
+        run: |
+          ARCHIVE="worky_${{ needs.release-please.outputs.tag_name }}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
+          zip "$ARCHIVE" worky${{ matrix.suffix }}
+          sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
+          echo "ARCHIVE=$ARCHIVE" >> "$GITHUB_ENV"
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          files: |
+            ${{ env.ARCHIVE }}
+            ${{ env.ARCHIVE }}.sha256

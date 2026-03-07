@@ -29,7 +29,7 @@ func scaffold(tmplFS fs.FS, tmplPath, destPath string, data any) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	return tmpl.Execute(f, data)
 }
