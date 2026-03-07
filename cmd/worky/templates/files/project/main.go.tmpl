@@ -1,0 +1,29 @@
+package main
+
+import (
+	"embed"
+
+	"github.com/davideimola/worky"
+)
+
+//go:embed all:site
+var site embed.FS
+
+func main() {
+	worky.New(worky.Config{
+		Name:    "<% .Name %>",
+		HomeDir: ".<% .Slug %>",
+		Port:    8080,
+		SiteFS:  site,
+		Chapters: []worky.Chapter{
+			{
+				ID:   "00",
+				Name: "Setup",
+				Slug: "00-setup",
+				Checks: []worky.Check{
+					// TODO: add your setup checks here
+				},
+			},
+		},
+	}).Run()
+}

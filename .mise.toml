@@ -1,0 +1,3 @@
+[tools]
+go = "1.24"
+"ubi:gohugoio/hugo[exe=hugo,matching=extended]" = "0.145.0"

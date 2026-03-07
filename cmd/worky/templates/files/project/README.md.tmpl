@@ -1,0 +1,48 @@
+# <% .Name %>
+
+A workshop built with [worky](https://github.com/davideimola/worky).
+
+## For participants
+
+1. Download the binary from the [releases page](../../releases)
+2. Run `./<% .Slug %> serve --open`
+3. Follow along in your browser
+4. Run `./<% .Slug %> check` to unlock each chapter
+
+## For workshop creators
+
+### Prerequisites
+
+- Go 1.24+
+- Hugo (extended)
+
+### Setup
+
+```sh
+hugo mod init <% .Module %>
+hugo mod get github.com/davideimola/worky
+hugo mod get github.com/geekdocs/geekdoc
+go mod tidy
+```
+
+### Development
+
+```sh
+make serve    # build site and run the workshop
+make check    # check current chapter progress
+make status   # show all chapter statuses
+```
+
+### Build and release
+
+```sh
+make build    # build for current platform
+make release  # cross-compile for all platforms
+```
+
+Or push a tag to trigger the GitHub Actions release workflow:
+
+```sh
+git tag v1.0.0
+git push origin v1.0.0
+```

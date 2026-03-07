@@ -1,0 +1,31 @@
+BINARY = <% .Slug %>
+
+.PHONY: tidy site build serve check status reset release
+
+tidy:
+	go mod tidy
+	hugo mod tidy
+
+site:
+	hugo
+
+build: site
+	go build -o bin/$(BINARY) .
+
+serve:
+	go run . serve --open
+
+check:
+	go run . check
+
+status:
+	go run . status
+
+reset:
+	go run . reset
+
+release:
+	GOOS=linux  GOARCH=amd64 go build -o bin/$(BINARY)-linux-amd64 .
+	GOOS=darwin GOARCH=arm64 go build -o bin/$(BINARY)-darwin-arm64 .
+	GOOS=darwin GOARCH=amd64 go build -o bin/$(BINARY)-darwin-amd64 .
+	GOOS=windows GOARCH=amd64 go build -o bin/$(BINARY)-windows-amd64.exe .

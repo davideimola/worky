@@ -1,0 +1,20 @@
+{{- $title := .Get 0 | default "Details" -}}
+{{- $type := "info" -}}
+{{- $icon := "💡" -}}
+{{- if in ($title | lower) "solution" -}}
+  {{- $type = "tip" -}}
+  {{- $icon = "✅" -}}
+{{- end -}}
+
+<div class="ws-details ws-details--{{ $type }}">
+  <details>
+    <summary class="ws-details__summary">
+      <span class="ws-details__icon">{{ $icon }}</span>
+      <span class="ws-details__title">{{ $title }}</span>
+      <span class="ws-details__arrow">▶</span>
+    </summary>
+    <div class="ws-details__body gdoc-markdown--nested">
+      {{ .Inner | $.Page.RenderString }}
+    </div>
+  </details>
+</div>
