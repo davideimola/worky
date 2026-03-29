@@ -14,6 +14,7 @@ func NewRootCmd() *cobra.Command {
 		NewInitCmd(),
 		NewNewCmd(),
 		NewBuildCmd(),
+		NewReportCmd(),
 	)
 
 	return root
