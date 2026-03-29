@@ -67,6 +67,12 @@ All cobra commands are built as unexported methods (`serveCmd`, `checkCmd`, etc.
 
 ## Verification
 
+After cloning, run once to configure git hooks:
+
+```sh
+make setup
+```
+
 After any Go change:
 
 ```sh

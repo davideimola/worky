@@ -32,7 +32,7 @@ assignees: ''
 
 ## Logs
 
-<!-- Run `worky logs` to collect relevant logs and paste them here. -->
+<!-- If applicable, paste any relevant output from the terminal here. -->
 
 ## Environment
 

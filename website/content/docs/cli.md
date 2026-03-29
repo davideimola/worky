@@ -121,7 +121,7 @@ The command asks four questions interactively:
 3. Expected behavior
 4. Actual behavior
 
-It then automatically collects your environment (worky version, OS, architecture, Go version) and opens your browser with a pre-filled GitHub issue. If no browser is available (e.g. headless environments), the URL is printed to the terminal instead.
+Once you answer the questions, it automatically collects your environment details (worky version, OS, architecture, Go version) and opens your browser with a pre-filled GitHub issue. If no browser is available (e.g. headless environments), the URL is printed to the terminal instead.
 
 ---
 

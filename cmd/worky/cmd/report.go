@@ -77,6 +77,9 @@ func platformBrowserOpener(url string) error {
 	switch runtime.GOOS {
 	case "darwin":
 		cmd = "open"
+	case "windows":
+		cmd = "rundll32"
+		return exec.Command(cmd, "url.dll,FileProtocolHandler", url).Start()
 	default:
 		cmd = "xdg-open"
 	}
