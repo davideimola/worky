@@ -1,7 +1,11 @@
 WORKY        := $(CURDIR)
 SCAFFOLD_DIR ?= /tmp/worky-scaffold
 
-.PHONY: build dev clean-scaffold
+.PHONY: build dev clean-scaffold setup
+
+## setup: configure git hooks (run once after cloning)
+setup:
+	git config core.hooksPath .githooks
 
 build:
 	go build -o bin/worky ./cmd/worky

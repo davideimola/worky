@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+go generate ./cmd/worky/cmd/
+git add .github/ISSUE_TEMPLATE/bug_report.md
