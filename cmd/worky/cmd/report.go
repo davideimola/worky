@@ -127,7 +127,7 @@ func runReport(opts ReportOptions, p Prompter) error {
 
 	u := buildReportURL(opts.info)
 	if err := opts.browserOpener(u); err != nil {
-		fmt.Fprintf(opts.out, "Open this URL to submit your report:\n%s\n", u)
+		_, _ = fmt.Fprintf(opts.out, "Open this URL to submit your report:\n%s\n", u)
 	}
 	return nil
 }
