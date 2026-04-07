@@ -1,0 +1,108 @@
+---
+---
+<div class="problem-strip">
+  <div class="problem-inner">
+    <div class="friction-card before">
+      <div class="fc-head">
+        <span class="fc-dot red"></span>
+        Before
+      </div>
+      <div class="fc-body">
+        <s>30 min setup</s> · <s>Broken envs</s> · <s>Lost before slide 1</s>
+      </div>
+    </div>
+
+    <!-- Pixel arrow -->
+    <div class="friction-arrow">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <rect x="0"  y="14" width="4" height="4" fill="rgba(0,194,160,0.35)" />
+        <rect x="4"  y="14" width="4" height="4" fill="rgba(0,194,160,0.45)" />
+        <rect x="8"  y="14" width="4" height="4" fill="rgba(0,194,160,0.55)" />
+        <rect x="12" y="14" width="4" height="4" fill="rgba(0,194,160,0.65)" />
+        <rect x="16" y="14" width="4" height="4" fill="rgba(0,194,160,0.75)" />
+        <rect x="20" y="14" width="4" height="4" fill="rgba(0,194,160,0.85)" />
+        <rect x="24" y="14" width="4" height="4" fill="var(--teal)" />
+        <rect x="20" y="10" width="4" height="4" fill="rgba(0,194,160,0.6)" />
+        <rect x="24" y="10" width="4" height="4" fill="var(--teal)" />
+        <rect x="28" y="14" width="4" height="4" fill="var(--teal)" />
+        <rect x="20" y="18" width="4" height="4" fill="rgba(0,194,160,0.6)" />
+        <rect x="24" y="18" width="4" height="4" fill="var(--teal)" />
+      </svg>
+    </div>
+
+    <div class="friction-card after">
+      <div class="fc-head">
+        <span class="fc-dot green"></span>
+        With Worky
+      </div>
+      <div class="fc-body">
+        One file, zero friction, everyone follows along.
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .problem-strip {
+    padding: 40px 0;
+    background: linear-gradient(180deg, rgba(7,17,34,0) 0%, rgba(0,194,160,0.02) 50%, rgba(7,17,34,0) 100%);
+    position: relative;
+    z-index: 10;
+  }
+  .problem-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+  .friction-card {
+    flex: 1;
+    background: var(--surface);
+    border: 0.5px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 24px 28px;
+    transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .friction-card.before {
+    border-color: rgba(255,87,87,0.15);
+    background: linear-gradient(180deg, rgba(255,87,87,0.03), var(--surface) 40%);
+    opacity: 0.85;
+  }
+  .friction-card.before:hover { opacity: 1; transform: translateY(-2px); border-color: rgba(255,87,87,0.3); }
+  .friction-card.after {
+    border-color: rgba(0,194,160,0.3);
+    background: linear-gradient(180deg, rgba(0,194,160,0.06), var(--surface) 60%);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .friction-card.after:hover { transform: translateY(-4px) scale(1.02); border-color: var(--teal); box-shadow: 0 16px 40px rgba(0,194,160,0.12); }
+  .friction-card.after .fc-body { color: rgba(255,255,255,0.95); font-weight: 500; }
+
+  .fc-head {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .fc-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .fc-dot.red { background: #FF5757; box-shadow: 0 0 8px rgba(255,87,87,0.4); }
+  .fc-dot.green { background: var(--teal); animation: pulseTeal 2s infinite; }
+  .fc-body { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.6; }
+  .fc-body s { text-decoration-color: rgba(255,255,255,0.2); }
+
+  .friction-arrow { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  @media (max-width: 768px) {
+    .problem-inner { flex-direction: column; }
+    .friction-arrow { transform: rotate(90deg); }
+  }
+</style>

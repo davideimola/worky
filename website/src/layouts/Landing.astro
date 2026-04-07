@@ -1,0 +1,83 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Worky — Build interactive workshops as a single Go binary',
+  description = 'Build self-contained interactive workshops as a single Go binary. One binary, embedded docs, progressive chapter locking.',
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content="https://worky.davideimola.dev/images/og-image.png" />
+  <meta property="og:url" content="https://worky.davideimola.dev" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style is:global>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #071122;
+      color: rgba(255,255,255,0.88);
+      overflow-x: hidden;
+    }
+    :root {
+      --teal: #00C2A0;
+      --teal-deep: #00A086;
+      --teal-ghost: rgba(0,194,160,0.10);
+      --midnight: #0E1F3A;
+      --surface: #0B1828;
+      --border: rgba(255,255,255,0.07);
+      --slate: rgba(255,255,255,0.45);
+      --mono: 'JetBrains Mono', monospace;
+      --nav-h: 56px;
+    }
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+    @keyframes pulseTeal {
+      0%   { box-shadow: 0 0 0 0 rgba(0,194,160,0.4); }
+      70%  { box-shadow: 0 0 0 8px rgba(0,194,160,0); }
+      100% { box-shadow: 0 0 0 0 rgba(0,194,160,0); }
+    }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes pixelOn {
+      0%  { opacity:0; }
+      45% { opacity:1; }
+      68% { opacity:0.4; }
+      100%{ opacity:1; }
+    }
+    @keyframes unlockFlash {
+      0%   { background: rgba(0,194,160,0.18); }
+      100% { background: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <slot />
+  <script>
+    // Scroll-reveal observer
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } }),
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

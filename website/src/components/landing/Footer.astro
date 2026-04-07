@@ -1,0 +1,129 @@
+---
+const GH_URL = 'https://github.com/davideimola/worky';
+const year = new Date().getFullYear();
+
+const links = [
+  { label: 'Getting Started', href: '/getting-started/' },
+  { label: 'CLI Reference', href: '/cli/' },
+  { label: 'GitHub', href: GH_URL },
+  { label: 'Releases', href: `${GH_URL}/releases` },
+];
+---
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+            <rect x="0" y="0" width="4" height="4" fill="#00C2A0"/>
+            <rect x="5" y="0" width="4" height="4" fill="#00C2A0"/>
+            <rect x="10" y="0" width="4" height="4" fill="#00C2A0"/>
+            <rect x="15" y="0" width="4" height="4" fill="#00C2A0"/>
+            <rect x="0" y="5" width="4" height="4" fill="#00C2A0"/>
+            <rect x="0" y="10" width="4" height="4" fill="#00C2A0"/>
+            <rect x="5" y="10" width="4" height="4" fill="#00C2A0"/>
+            <rect x="10" y="10" width="4" height="4" fill="#00C2A0"/>
+            <rect x="0" y="15" width="4" height="4" fill="#00C2A0"/>
+            <rect x="5" y="15" width="4" height="4" fill="#00C2A0"/>
+            <rect x="10" y="15" width="4" height="4" fill="#00C2A0"/>
+            <rect x="15" y="15" width="4" height="4" fill="#00C2A0"/>
+          </svg>
+          <span class="footer-logo-text">worky</span>
+        </div>
+        <p class="footer-tagline">Build interactive workshops in Go.<br/>Distribute as a single binary.</p>
+      </div>
+
+      <nav class="footer-nav">
+        {links.map(l => (
+          <a href={l.href} class="footer-link">{l.label}</a>
+        ))}
+      </nav>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© {year} Davide Imola. MIT License.</span>
+      <span class="footer-made">Made with <span class="heart">♥</span> and Go</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: #040d1a;
+    border-top: 0.5px solid rgba(255,255,255,0.05);
+    padding: 56px 0 32px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  .footer-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 48px;
+  }
+
+  .footer-brand { display: flex; flex-direction: column; gap: 14px; }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .footer-logo-text {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88);
+    letter-spacing: -0.02em;
+  }
+
+  .footer-tagline {
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.65;
+    margin: 0;
+    max-width: 260px;
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+  }
+  .footer-link {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    text-decoration: none;
+    transition: color 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .footer-link:hover { color: var(--teal); }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 24px;
+    border-top: 0.5px solid rgba(255,255,255,0.04);
+  }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+  }
+  .footer-made {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+  }
+  .heart { color: var(--teal); }
+
+  @media (max-width: 640px) {
+    .footer-inner { flex-direction: column; gap: 32px; }
+    .footer-nav { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 16px; }
+    .footer-bottom { flex-direction: column; gap: 8px; align-items: flex-start; }
+  }
+</style>

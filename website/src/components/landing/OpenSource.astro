@@ -1,0 +1,157 @@
+---
+const GH_URL = 'https://github.com/davideimola/worky';
+const stats = [
+  { num: 'MIT',  lbl: 'License' },
+  { num: 'Go',   lbl: 'Language' },
+  { num: '0',    lbl: 'Dependencies' },
+  { num: '3',    lbl: 'Platforms' },
+];
+---
+<section class="oss-section" id="oss">
+  <div class="container">
+    <div class="oss-inner">
+      <!-- Left: text + stats -->
+      <div class="reveal">
+        <div class="sec-label">Open source</div>
+        <h2 class="sec-title">Free forever.<br />No strings attached.</h2>
+        <p class="sec-sub">Worky is MIT-licensed and has zero runtime dependencies beyond the Go standard library. Audit it, fork it, contribute to it.</p>
+
+        <div class="oss-stats">
+          {stats.map(s => (
+            <div class="oss-stat">
+              <div class="oss-num">{s.num}</div>
+              <div class="oss-lbl">{s.lbl}</div>
+            </div>
+          ))}
+        </div>
+
+        <div class="oss-actions">
+          <a href={GH_URL} class="btn-github">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            Star on GitHub
+          </a>
+          <a href="/getting-started/" class="btn-docs">Read the docs →</a>
+        </div>
+      </div>
+
+      <!-- Right: pixel heart grid -->
+      <div class="oss-grid-wrap reveal d2" id="ossGrid"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .oss-section { background: var(--surface); padding: 140px 0; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  .sec-label {
+    font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--teal);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sec-label::before { content: ''; display: block; width: 16px; height: 1px; background: var(--teal); }
+  .sec-title { font-size: clamp(26px, 2.8vw, 38px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: rgba(255,255,255,0.92); margin: 0 0 14px; }
+  .sec-sub { font-size: 17px; color: var(--slate); line-height: 1.65; max-width: 520px; margin: 0; }
+
+  .oss-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+
+  .oss-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 36px; }
+  .oss-stat { background: #071122; border: 0.5px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+  .oss-num { font-family: var(--mono); font-size: 26px; font-weight: 500; color: rgba(255,255,255,0.90); letter-spacing: -0.02em; margin-bottom: 4px; }
+  .oss-lbl { font-family: var(--mono); font-size: 11px; color: var(--slate); letter-spacing: 0.03em; }
+
+  .oss-actions { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+
+  .btn-github {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    background: var(--teal); color: var(--midnight);
+    padding: 12px 22px; border-radius: 6px; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+  }
+  .btn-github:hover { background: var(--teal-deep); color: #fff; transform: translateY(-1px); }
+
+  .btn-docs {
+    font-family: var(--mono); font-size: 13px;
+    color: rgba(255,255,255,0.5); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .btn-docs:hover { color: #fff; }
+
+  /* Pixel grid */
+  .oss-grid-wrap {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 4px;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  :global(.ob) {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.03);
+    transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1), filter 0.4s ease, background 0.4s ease;
+    cursor: pointer;
+  }
+  :global(.ob:hover) { transform: scale(1.4) !important; background: #fff; box-shadow: 0 0 14px rgba(255,255,255,0.8); }
+  :global(.ob.on) { background: rgba(0,194,160,0.95); box-shadow: 0 0 8px rgba(0,194,160,0.3); }
+  :global(.ob.pulse) { transform: scale(1.15) translateZ(0); filter: brightness(1.3); }
+  :global(.ob.echo) { background: rgba(0,194,160,0.25); transform: scale(1.13) translateZ(0); box-shadow: 0 0 10px rgba(0,194,160,0.2); }
+
+  @media (max-width: 768px) { .oss-inner { grid-template-columns: 1fr; gap: 40px; } }
+</style>
+
+<script>
+  // ─── Pixel heart grid ───
+  const COLS = 16;
+  const ROWS = 16;
+  // Heart pattern (1 = teal pixel) in a 16x16 grid
+  const heart = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,1,1,0,0,0,0,0,1,1,0,0,0,0],
+    [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0],
+    [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    [0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0],
+    [0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0],
+    [0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  ];
+
+  const wrap = document.getElementById('ossGrid');
+  if (wrap) {
+    const cells: HTMLDivElement[] = [];
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const el = document.createElement('div');
+        el.className = 'ob' + (heart[r][c] ? ' on' : '');
+        wrap.appendChild(el);
+        cells.push(el);
+
+        // Click ripple
+        el.addEventListener('click', () => {
+          el.classList.add('pulse');
+          setTimeout(() => el.classList.remove('pulse'), 600);
+          // Echo neighbours
+          [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,1],[-1,1],[1,-1]].forEach(([dr, dc]) => {
+            const nr = r + dr, nc = c + dc;
+            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+              const nb = cells[nr * COLS + nc];
+              nb.classList.add('echo');
+              setTimeout(() => nb.classList.remove('echo'), 600);
+            }
+          });
+        });
+      }
+    }
+  }
+</script>

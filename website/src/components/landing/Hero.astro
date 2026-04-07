@@ -1,0 +1,449 @@
+---
+const GH_URL = 'https://github.com/davideimola/worky';
+---
+<section class="hero">
+  <!-- Interactive grid background -->
+  <div class="hero-bg-grid" id="heroBgGrid"></div>
+  <div class="hero-glow"></div>
+
+  <!-- Centered copy -->
+  <div class="hero-center">
+    <div class="hero-badge" style="opacity:0;animation:fadeUp 0.55s ease 0.05s forwards;">
+      <span class="hero-badge-dot"></span>
+      <span class="hero-badge-text">Open source · Go library · MIT License</span>
+    </div>
+
+    <h1 class="hero-headline" style="opacity:0;animation:fadeUp 0.55s ease 0.15s forwards;">
+      The workshop that<br />students actually <em>complete.</em>
+    </h1>
+
+    <span class="hero-rule" style="opacity:0;animation:fadeUp 0.55s ease 0.22s forwards;"></span>
+
+    <p class="hero-sub" style="opacity:0;animation:fadeUp 0.55s ease 0.28s forwards;">
+      Guide your students step-by-step, from setup to completion, distributed as a single executable file.
+      Participants run one command, their browser opens, and automatic validators handle the rest.
+    </p>
+
+    <div class="hero-actions" style="opacity:0;animation:fadeUp 0.55s ease 0.36s forwards;">
+      <a href="/getting-started/" class="btn-primary">
+        Get Started
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href={GH_URL} class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </div>
+  </div>
+
+  <!-- Workshop preview mockup -->
+  <div class="ws-preview-wrap" style="opacity:0;animation:fadeUp 0.7s ease 0.48s forwards;">
+    <div class="ws-preview">
+      <!-- Window bar -->
+      <div class="ws-bar">
+        <div class="ws-bar-dots">
+          <div class="ws-bar-dot" style="background:#FF5F56"></div>
+          <div class="ws-bar-dot" style="background:#FFBD2E"></div>
+          <div class="ws-bar-dot" style="background:#27C93F"></div>
+        </div>
+        <span class="ws-bar-title" id="wsBarTitle">Kubernetes 101 — localhost:7331</span>
+        <div class="ws-bar-progress">
+          <div class="ws-prog-pip done" id="pip0"></div>
+          <div class="ws-prog-pip active" id="pip1"></div>
+          <div class="ws-prog-pip" id="pip2"></div>
+          <div class="ws-prog-pip" id="pip3"></div>
+          <div class="ws-prog-pip" id="pip4"></div>
+        </div>
+      </div>
+      <!-- Body -->
+      <div class="ws-body">
+        <!-- Sidebar -->
+        <div class="ws-sidebar">
+          <div class="ws-step-row done" id="srow0">
+            <div class="ws-step-icon">✓</div>
+            <span class="ws-step-label">Create namespace</span>
+          </div>
+          <div class="ws-step-row active" id="srow1">
+            <div class="ws-step-icon" id="sicon1">02</div>
+            <span class="ws-step-label" id="slabel1">Deploy the app</span>
+          </div>
+          <div class="ws-step-row locked" id="srow2">
+            <div class="ws-step-icon">—</div>
+            <span class="ws-step-label">Configure ingress</span>
+          </div>
+          <div class="ws-step-row locked" id="srow3">
+            <div class="ws-step-icon">—</div>
+            <span class="ws-step-label">Expose service</span>
+          </div>
+          <div class="ws-step-row locked" id="srow4">
+            <div class="ws-step-icon">—</div>
+            <span class="ws-step-label">Scale deployment</span>
+          </div>
+        </div>
+        <!-- Content pane -->
+        <div class="ws-content">
+          <h3 class="ws-content-title" id="wsTitle">Deploy the application</h3>
+          <p class="ws-content-desc" id="wsDesc">
+            Apply the deployment manifest to create your first pod in the
+            <code style="font-family:var(--mono);font-size:11px;color:var(--teal)">my-workshop</code> namespace.
+          </p>
+          <div class="ws-cmd-block">
+            <span class="ws-cmd-label">Run in your terminal</span>
+            <div class="ws-cmd">
+              <span class="ws-cmd-prompt">$</span>
+              <span class="ws-cmd-text" id="wsCmd">kubectl apply -f deployment.yaml<span class="cursor"></span></span>
+            </div>
+          </div>
+          <div class="ws-validator">
+            <div class="ws-val-idle" id="wsIdle">Validator will run automatically…</div>
+            <div class="ws-val-running" id="wsRunning">
+              <div class="ws-spinner"></div>
+              Checking kubectl get deploy -n my-workshop…
+            </div>
+            <div class="ws-val-ok" id="wsOk">✓ &nbsp;Deployment found — step complete</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ─── Hero ─── */
+  .hero {
+    min-height: 100vh;
+    background: var(--midnight);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 120px 32px 80px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .hero-bg-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    background: transparent;
+  }
+  .hero-bg-grid::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, transparent 10%, var(--midnight) 75%);
+    pointer-events: none;
+  }
+  .hero-bg-cell {
+    border: 0.5px solid rgba(255,255,255,0.025);
+    transition: background 0.8s ease, border-color 0.8s ease;
+  }
+  .hero-bg-cell:hover {
+    background: rgba(0,194,160,0.12);
+    border-color: rgba(0,194,160,0.3);
+    transition: background 0s, border-color 0s;
+  }
+  .hero-glow {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 260px;
+    background: radial-gradient(ellipse, rgba(0,194,160,0.11) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-center {
+    position: relative;
+    z-index: 10;
+    pointer-events: none;
+    max-width: 760px;
+    width: 100%;
+  }
+  .hero-center * { pointer-events: auto; }
+
+  /* Badge */
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,194,160,0.08);
+    border: 0.5px solid rgba(0,194,160,0.25);
+    border-radius: 999px;
+    padding: 5px 14px 5px 8px;
+    margin-bottom: 32px;
+  }
+  .hero-badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 6px var(--teal);
+    flex-shrink: 0;
+    animation: pulseTeal 2s infinite;
+  }
+  .hero-badge-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--teal);
+    letter-spacing: 0.06em;
+  }
+
+  /* Headline */
+  h1.hero-headline {
+    font-size: clamp(40px, 5.5vw, 72px);
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.06;
+    letter-spacing: -0.04em;
+    margin: 0 0 22px;
+  }
+  h1.hero-headline em { font-style: normal; color: var(--teal); }
+
+  .hero-rule {
+    display: block;
+    width: 40px; height: 1.5px;
+    background: var(--teal);
+    margin: 0 auto 22px;
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: rgba(255,255,255,0.46);
+    line-height: 1.72;
+    margin: 0 auto 36px;
+    max-width: 520px;
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--teal);
+    color: var(--midnight);
+    padding: 12px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--teal-deep); color: #fff; transform: translateY(-1px); }
+
+  .btn-ghost {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.2s, color 0.2s, transform 0.15s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.4); color: #fff; transform: translateY(-1px); }
+
+  /* ─── Workshop Preview ─── */
+  .ws-preview-wrap {
+    position: relative;
+    max-width: 860px;
+    width: 100%;
+    margin-top: 60px;
+  }
+  .ws-preview-wrap::before,
+  .ws-preview-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 60px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .ws-preview-wrap::before { left: 0; background: linear-gradient(to right, var(--midnight), transparent); }
+  .ws-preview-wrap::after  { right: 0; background: linear-gradient(to left, var(--midnight), transparent); }
+
+  .ws-preview {
+    background: #07111f;
+    border: 0.5px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 0 0.5px rgba(0,194,160,0.08), 0 32px 80px rgba(0,0,0,0.55), 0 0 60px rgba(0,194,160,0.04) inset;
+  }
+  .ws-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    background: #0a1828;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  }
+  .ws-bar-dots { display: flex; gap: 6px; }
+  .ws-bar-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .ws-bar-title { font-family: var(--mono); font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.04em; }
+  .ws-bar-progress { display: flex; align-items: center; gap: 4px; }
+  .ws-prog-pip { width: 18px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1); transition: background 0.4s; }
+  .ws-prog-pip.done { background: var(--teal); }
+  .ws-prog-pip.active { background: rgba(0,194,160,0.45); }
+
+  .ws-body { display: grid; grid-template-columns: 200px 1fr; min-height: 280px; }
+  .ws-sidebar { border-right: 0.5px solid rgba(255,255,255,0.06); padding: 16px 0; }
+
+  .ws-step-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+  }
+  .ws-step-row.done { opacity: 0.65; }
+  .ws-step-row.active { background: rgba(0,194,160,0.07); }
+  .ws-step-row.locked { opacity: 0.28; }
+  .ws-step-row.unlocking { animation: unlockFlash 0.6s ease forwards; }
+
+  .ws-step-icon {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: var(--mono); font-size: 9px; font-weight: 500;
+  }
+  .ws-step-row.done .ws-step-icon { background: rgba(0,194,160,0.15); color: var(--teal); }
+  .ws-step-row.active .ws-step-icon { background: var(--teal); color: var(--midnight); }
+  .ws-step-row.locked .ws-step-icon { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.3); }
+
+  .ws-step-label { font-family: var(--mono); font-size: 11px; color: rgba(255,255,255,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ws-step-row.active .ws-step-label { color: #fff; }
+
+  .ws-content { padding: 24px 28px; text-align: left; }
+  .ws-content-title { font-size: 17px; font-weight: 600; color: #fff; letter-spacing: -0.01em; margin: 0 0 8px; }
+  .ws-content-desc { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.65; margin: 0 0 20px; max-width: 420px; }
+
+  .ws-cmd-block { background: #071122; border: 0.5px solid rgba(255,255,255,0.08); border-radius: 7px; overflow: hidden; margin-bottom: 16px; }
+  .ws-cmd-label { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.22); letter-spacing: 0.06em; padding: 7px 14px 6px; border-bottom: 0.5px solid rgba(255,255,255,0.05); display: block; }
+  .ws-cmd { display: flex; align-items: center; gap: 8px; padding: 10px 14px; font-family: var(--mono); font-size: 12px; }
+  .ws-cmd-prompt { color: var(--teal); }
+  .ws-cmd-text { color: rgba(255,255,255,0.88); }
+
+  .ws-validator { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; min-height: 28px; }
+  .ws-val-idle { color: rgba(255,255,255,0.22); }
+  .ws-val-running { color: rgba(255,255,255,0.5); display: none; align-items: center; gap: 8px; }
+  .ws-val-ok { color: var(--teal); display: none; align-items: center; gap: 6px; }
+  .ws-spinner { width: 10px; height: 10px; border: 1.5px solid rgba(255,255,255,0.15); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+  .cursor { display: inline-block; width: 7px; height: 13px; background: var(--teal); vertical-align: middle; margin-left: 2px; animation: blink 1s step-end infinite; }
+
+  @media (max-width: 768px) {
+    .ws-body { grid-template-columns: 1fr; }
+    .ws-sidebar { display: none; }
+  }
+</style>
+
+<script>
+  // ─── Hero grid ───
+  const grid = document.getElementById('heroBgGrid') as HTMLDivElement;
+  if (grid) {
+    const cellSize = 52;
+    const cols = Math.ceil(grid.offsetWidth / cellSize) + 1;
+    const rows = Math.ceil(grid.offsetHeight / cellSize) + 1;
+    grid.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+    grid.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+    for (let i = 0; i < cols * rows; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'hero-bg-cell';
+      grid.appendChild(cell);
+    }
+  }
+
+  // ─── Workshop mockup animation ───
+  const steps = [
+    { title: 'Create the namespace', desc: 'Set up an isolated namespace for your workshop resources in the cluster.', cmd: 'kubectl create namespace my-workshop', check: 'Namespace my-workshop found' },
+    { title: 'Deploy the application', desc: 'Apply the deployment manifest to create your first pod in the my-workshop namespace.', cmd: 'kubectl apply -f deployment.yaml', check: 'Deployment found — step complete' },
+    { title: 'Configure ingress', desc: 'Add an ingress rule to route external traffic to your deployed service.', cmd: 'kubectl apply -f ingress.yaml', check: 'Ingress rule active' },
+    { title: 'Expose the service', desc: 'Create a LoadBalancer service to make your app reachable from outside the cluster.', cmd: 'kubectl expose deploy workshop-app --type=LoadBalancer', check: 'Service exposed on port 80' },
+    { title: 'Scale the deployment', desc: 'Scale your deployment to 3 replicas for high availability.', cmd: 'kubectl scale deploy workshop-app --replicas=3', check: '3 replicas running — workshop complete!' },
+  ];
+
+  const labels = ['Create namespace', 'Deploy the app', 'Configure ingress', 'Expose service', 'Scale deployment'];
+  let current = 1;
+  const CYCLE = 6200;
+
+  function setStep(idx: number) {
+    const s = steps[idx];
+    const titleEl = document.getElementById('wsTitle');
+    const descEl = document.getElementById('wsDesc');
+    const cmdEl = document.getElementById('wsCmd');
+    const idleEl = document.getElementById('wsIdle');
+    const runEl = document.getElementById('wsRunning');
+    const okEl = document.getElementById('wsOk');
+
+    if (titleEl) titleEl.textContent = s.title;
+    if (descEl) descEl.textContent = s.desc;
+    if (cmdEl) cmdEl.innerHTML = s.cmd + '<span class="cursor"></span>';
+    if (idleEl) { idleEl.style.display = 'block'; }
+    if (runEl) { runEl.style.display = 'none'; }
+    if (okEl) { okEl.style.display = 'none'; }
+
+    // Update sidebar
+    for (let i = 0; i < 5; i++) {
+      const row = document.getElementById(`srow${i}`);
+      const icon = document.getElementById(`sicon${i}`);
+      const label = document.getElementById(`slabel${i}`);
+      if (!row) continue;
+      row.className = 'ws-step-row' + (i < idx ? ' done' : i === idx ? ' active' : ' locked');
+      if (icon) icon.textContent = i < idx ? '✓' : i === idx ? String(idx + 1).padStart(2, '0') : '—';
+      if (label) label.textContent = labels[i];
+
+      // Update progress pips
+      const pip = document.getElementById(`pip${i}`);
+      if (pip) { pip.className = 'ws-prog-pip' + (i < idx ? ' done' : i === idx ? ' active' : ''); }
+    }
+  }
+
+  function runCycle() {
+    setStep(current);
+    // After 2.5s show spinner
+    setTimeout(() => {
+      const runEl = document.getElementById('wsRunning');
+      const idleEl = document.getElementById('wsIdle');
+      if (idleEl) idleEl.style.display = 'none';
+      if (runEl) { runEl.style.display = 'flex'; }
+    }, 2500);
+    // After 4.2s show ok
+    setTimeout(() => {
+      const runEl = document.getElementById('wsRunning');
+      const okEl = document.getElementById('wsOk');
+      const s = steps[current];
+      if (okEl) { okEl.textContent = '✓  ' + s.check; okEl.style.display = 'flex'; }
+      if (runEl) runEl.style.display = 'none';
+    }, 4200);
+    // After 5.5s unlock next & advance
+    setTimeout(() => {
+      const next = (current + 1) % 5;
+      const nextRow = document.getElementById(`srow${next === 0 ? 0 : next}`);
+      if (nextRow && next !== 0) {
+        nextRow.classList.add('unlocking');
+        setTimeout(() => nextRow.classList.remove('unlocking'), 700);
+      }
+      current = next === 0 ? 1 : next; // loop back to step 1 after last
+      if (next === 0) current = 1;
+    }, 5500);
+  }
+
+  // Start after hero animation completes
+  setTimeout(() => {
+    runCycle();
+    setInterval(runCycle, CYCLE);
+  }, 1200);
+</script>
