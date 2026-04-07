@@ -1,0 +1,316 @@
+/* ═══════════════════════════════════════════════════════
+   WORKY — Starlight Theme Override
+   Maps brand tokens to Starlight CSS variables.
+   Dark-only: we override both :root and [data-theme='dark'].
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Force dark palette in all contexts ─── */
+:root,
+[data-theme='dark'],
+[data-theme='light'] {
+  /* Accent (teal) */
+  --sl-color-accent-low:  rgba(0, 194, 160, 0.12);
+  --sl-color-accent:      #00C2A0;
+  --sl-color-accent-high: #00E5C0;
+
+  /* Text scale (light → dark in Starlight's naming convention is inverted) */
+  --sl-color-white:  #ffffff;
+  --sl-color-gray-1: rgba(255, 255, 255, 0.88);
+  --sl-color-gray-2: rgba(255, 255, 255, 0.70);
+  --sl-color-gray-3: rgba(255, 255, 255, 0.50);
+  --sl-color-gray-4: rgba(255, 255, 255, 0.28);
+  --sl-color-gray-5: rgba(255, 255, 255, 0.12);
+  --sl-color-gray-6: rgba(255, 255, 255, 0.07);
+  --sl-color-black:  #071122;
+
+  /* Backgrounds */
+  --sl-color-bg:           #071122;
+  --sl-color-bg-nav:       rgba(14, 31, 58, 0.97);
+  --sl-color-bg-sidebar:   #0B1828;
+  --sl-color-bg-inline-code: rgba(0, 194, 160, 0.08);
+  --sl-color-bg-badge:     rgba(0, 194, 160, 0.12);
+
+  /* Borders */
+  --sl-color-hairline:       rgba(255, 255, 255, 0.07);
+  --sl-color-hairline-light: rgba(255, 255, 255, 0.04);
+  --sl-color-hairline-shade: rgba(0, 0, 0, 0.3);
+
+  /* Text */
+  --sl-color-text:        rgba(255, 255, 255, 0.88);
+  --sl-color-text-accent: #00C2A0;
+  --sl-color-text-invert: #071122;
+
+  /* Typography */
+  --sl-font:      'Inter', system-ui, sans-serif;
+  --sl-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --sl-text-xs:   var(--text-xs);
+  --sl-text-sm:   var(--text-sm);
+  --sl-text-base: var(--text-base);
+  --sl-text-h1:   clamp(1.6rem, 4vw, 2.4rem);
+  --sl-text-h2:   clamp(1.2rem, 2.5vw, 1.6rem);
+  --sl-text-h3:   1.2rem;
+  --sl-text-h4:   1rem;
+
+  /* Nav */
+  --sl-nav-height: var(--nav-height);
+  --sl-nav-pad-x:  var(--space-8);
+  --sl-nav-pad-y:  0;
+
+  /* Sidebar */
+  --sl-sidebar-width: 260px;
+
+  /* Content */
+  --sl-content-width: 44rem;
+
+  /* Shadows */
+  --sl-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --sl-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Hide the theme toggle (dark-only site) ─── */
+starlight-theme-select,
+[data-sl-theme-select] {
+  display: none !important;
+}
+
+/* ─── Navbar ─── */
+.site-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: var(--tracking-normal);
+  color: #fff !important;
+}
+
+header.header {
+  background: rgba(14, 31, 58, 0.97) !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ─── Sidebar ─── */
+.sidebar-pane {
+  background: var(--color-surface) !important;
+  border-right: 0.5px solid var(--color-border) !important;
+}
+
+.sidebar-content {
+  padding-top: var(--space-6) !important;
+}
+
+/* Group labels */
+.group-label span {
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-xs) !important;
+  letter-spacing: var(--tracking-wide) !important;
+  text-transform: uppercase;
+  color: var(--color-slate) !important;
+}
+
+/* Sidebar links */
+a[aria-current='page'] {
+  background: var(--color-teal-ghost) !important;
+  color: var(--color-teal) !important;
+  border-left: 2px solid var(--color-teal);
+  font-weight: 500;
+}
+
+.sidebar-content a:hover:not([aria-current='page']) {
+  color: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* ─── Content area ─── */
+.content-panel {
+  background: var(--color-bg) !important;
+}
+
+.sl-markdown-content {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-white);
+}
+
+/* Headings */
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+.sl-markdown-content h4 {
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+  color: #fff;
+  scroll-margin-top: calc(var(--nav-height) + var(--space-6));
+}
+
+.sl-markdown-content h2 {
+  border-bottom: 0.5px solid var(--color-border);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+/* Links */
+.sl-markdown-content a {
+  color: var(--color-teal);
+  text-decoration: none;
+  border-bottom: 0.5px solid var(--color-teal-border);
+  transition: color var(--transition-base), border-color var(--transition-base);
+}
+
+.sl-markdown-content a:hover {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Inline code */
+.sl-markdown-content code:not(pre > code) {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--color-teal-ghost);
+  color: var(--color-teal);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--color-teal-border);
+}
+
+/* Code blocks */
+.sl-markdown-content pre {
+  background: var(--color-surface) !important;
+  border: 0.5px solid var(--color-border-mid) !important;
+  border-radius: var(--radius-lg) !important;
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-sm) !important;
+  line-height: 1.7 !important;
+}
+
+/* Blockquotes */
+.sl-markdown-content blockquote {
+  border-left: 2px solid var(--color-teal);
+  background: var(--color-surface);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: var(--space-4) var(--space-6);
+  color: var(--color-slate-light);
+  margin: var(--space-6) 0;
+}
+
+/* Tables */
+.sl-markdown-content table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.sl-markdown-content th {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-teal);
+  border-bottom: 0.5px solid var(--color-border-mid);
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+}
+
+.sl-markdown-content td {
+  border-bottom: 0.5px solid var(--color-border);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-slate-light);
+}
+
+.sl-markdown-content tr:last-child td {
+  border-bottom: none;
+}
+
+/* ─── Right sidebar (table of contents) ─── */
+.right-sidebar {
+  border-left: 0.5px solid var(--color-border) !important;
+}
+
+.right-sidebar-panel {
+  background: transparent !important;
+}
+
+/* TOC heading */
+.sl-markdown-content + aside h2,
+starlight-toc nav label {
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-xs) !important;
+  letter-spacing: var(--tracking-wide) !important;
+  text-transform: uppercase;
+  color: var(--color-slate) !important;
+}
+
+/* ─── Pagination ─── */
+.pagination-links a {
+  background: var(--color-surface) !important;
+  border: 0.5px solid var(--color-border) !important;
+  border-radius: var(--radius-md) !important;
+  transition: border-color var(--transition-base) !important;
+}
+
+.pagination-links a:hover {
+  border-color: var(--color-teal-border) !important;
+}
+
+/* ─── Aside / callout components ─── */
+.starlight-aside {
+  border-radius: var(--radius-lg);
+  border-left-width: 2px;
+}
+
+.starlight-aside--note {
+  background: rgba(97, 175, 239, 0.06);
+  border-left-color: var(--color-code-blue);
+}
+
+.starlight-aside--tip {
+  background: var(--color-teal-ghost);
+  border-left-color: var(--color-teal);
+}
+
+.starlight-aside--caution {
+  background: rgba(229, 192, 123, 0.06);
+  border-left-color: var(--color-code-yellow);
+}
+
+.starlight-aside--danger {
+  background: rgba(255, 87, 87, 0.06);
+  border-left-color: var(--color-error);
+}
+
+/* ─── Search ─── */
+site-search dialog {
+  background: var(--color-midnight) !important;
+  border: 0.5px solid var(--color-border-mid) !important;
+  border-radius: var(--radius-xl) !important;
+}
+
+.pagefind-ui__search-input {
+  background: var(--color-surface) !important;
+  color: var(--color-white) !important;
+  border: 0.5px solid var(--color-border-mid) !important;
+  border-radius: var(--radius-md) !important;
+  font-family: var(--font-sans) !important;
+}
+
+/* ─── Expressive Code (syntax highlighting) ─── */
+.expressive-code .frame {
+  background: var(--color-surface) !important;
+  border: 0.5px solid var(--color-border-mid) !important;
+  border-radius: var(--radius-lg) !important;
+}
+
+.expressive-code .title {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-bottom: 0.5px solid var(--color-border) !important;
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-xs) !important;
+  color: var(--color-slate) !important;
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 50rem) {
+  .mobile-menu-toggle svg {
+    color: var(--color-white);
+  }
+}

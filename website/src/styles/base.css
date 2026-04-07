@@ -1,0 +1,42 @@
+/* ─── Tailwind layers ─── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base resets (applied only to non-Starlight pages) ─── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #071122;
+    color: rgba(255, 255, 255, 0.88);
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+/* ─── Shared component layer ─── */
+@layer components {
+  /* Scroll-reveal utility — toggled by JS */
+  .reveal {
+    @apply opacity-0 translate-y-5 transition-all duration-500 ease-out;
+  }
+
+  .reveal.visible {
+    @apply opacity-100 translate-y-0;
+  }
+
+  /* Section wrapper */
+  .section-inner {
+    @apply max-w-content mx-auto px-8;
+  }
+
+  /* Divider line */
+  .divider {
+    @apply border-0 border-t border-border h-px;
+  }
+}

@@ -1,0 +1,92 @@
+---
+// Landing page — placeholder for issue #22
+// Full implementation: all sections from .assets/worky-landing.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worky — Build interactive workshops as a single Go binary</title>
+  <meta name="description" content="Build self-contained interactive workshops as a single Go binary. One binary, embedded docs, progressive chapter locking." />
+  <meta property="og:title" content="Worky — Build interactive workshops as a single Go binary" />
+  <meta property="og:description" content="Build self-contained interactive workshops as a single Go binary." />
+  <meta property="og:image" content="https://worky.davideimola.dev/images/og-image.png" />
+  <meta property="og:url" content="https://worky.davideimola.dev" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="bg-bg text-slate-bright font-sans antialiased overflow-x-hidden">
+
+  <!-- Navbar -->
+  <nav class="fixed top-0 inset-x-0 z-50 border-b border-border"
+       style="background: rgba(14,31,58,0.97); backdrop-filter: blur(12px);">
+    <div class="section-inner flex items-center h-nav">
+      <a href="/" class="flex items-center gap-2.5 no-underline">
+        <img src="/images/logo.svg" alt="Worky" class="w-8 h-8" />
+        <span class="font-semibold text-[17px] text-white tracking-tight">Worky</span>
+      </a>
+      <ul class="flex items-center gap-7 ml-auto list-none">
+        <li><a href="#how" class="font-mono text-xs text-slate hover:text-white transition-colors">How it works</a></li>
+        <li><a href="#features" class="font-mono text-xs text-slate hover:text-white transition-colors">For creators</a></li>
+        <li><a href="#oss" class="font-mono text-xs text-slate hover:text-white transition-colors">Open source</a></li>
+        <li>
+          <a href="https://github.com/davideimola/worky"
+             class="font-mono text-xs font-medium bg-teal text-midnight px-4 py-1.5 rounded hover:bg-teal-deep hover:text-white transition-colors">
+            View on GitHub
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero (placeholder — full implementation in #22) -->
+  <section class="min-h-screen bg-midnight flex flex-col items-center justify-center pt-nav px-8 text-center">
+    <div class="max-w-[760px] w-full space-y-6 animate-fade-up">
+      <span class="inline-flex items-center gap-2 bg-teal-ghost border border-teal-border rounded-full px-4 py-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-teal animate-pulse-teal flex-shrink-0"></span>
+        <span class="font-mono text-[11px] text-teal tracking-widest">Go library →</span>
+      </span>
+
+      <h1 class="text-hero font-semibold text-white leading-tight tracking-tighter">
+        Build <em class="not-italic text-teal">self-contained</em><br />
+        interactive workshops
+      </h1>
+
+      <p class="text-[17px] text-slate leading-relaxed max-w-[520px] mx-auto">
+        One binary. Embedded docs. Progressive chapter locking.<br />
+        Participants download one file, run one command, and follow along.
+      </p>
+
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <a href="/getting-started/"
+           class="inline-flex items-center gap-2 bg-teal text-midnight font-mono text-sm font-medium px-6 py-3 rounded-md hover:bg-teal-deep hover:text-white transition-colors hover:-translate-y-px">
+          Get Started →
+        </a>
+        <a href="https://github.com/davideimola/worky"
+           class="inline-flex items-center gap-2 text-slate border border-border-mid font-mono text-sm px-5 py-3 rounded-md hover:border-white/40 hover:text-white transition-colors hover:-translate-y-px">
+          View on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-bg border-t border-border py-10">
+    <div class="section-inner flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <img src="/images/logo.svg" alt="Worky" class="w-6 h-6 opacity-70" />
+        <span class="font-mono text-xs text-slate">Open source workshop distribution · Built with Go</span>
+      </div>
+      <div class="flex items-center gap-5">
+        <a href="https://github.com/davideimola/worky" class="font-mono text-xs text-slate hover:text-teal transition-colors">GitHub</a>
+        <a href="/getting-started/" class="font-mono text-xs text-slate hover:text-teal transition-colors">Docs</a>
+        <a href="https://github.com/davideimola/worky/blob/main/LICENSE" class="font-mono text-xs text-slate hover:text-teal transition-colors">MIT License</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
