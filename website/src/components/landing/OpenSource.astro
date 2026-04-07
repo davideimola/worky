@@ -186,21 +186,26 @@ const stats = [
   }
 
   // ─── Entrance: bloom from center on scroll, then start heartbeat ───
+  // Only set scale (not opacity) on cells — opacity lives on the wrapper.
+  // After entrance, clearProps removes GSAP inline transform so CSS
+  // classes (pulse/echo) can take over cleanly.
   const heartCells = cells.filter((_, i) => heartSet.has(i));
-  gsap.set(heartCells, { scale: 0, opacity: 0, transformOrigin: '50% 50%' });
+  gsap.set(heartCells, { scale: 0, transformOrigin: '50% 50%' });
 
   ScrollTrigger.create({
     trigger: wrap,
     start: 'top 85%',
     once: true,
     onEnter() {
-      gsap.to(wrap, { opacity: 1, duration: 0.2 });
+      gsap.to(wrap, { opacity: 1, duration: 0.3, ease: 'power2.out' });
       gsap.to(heartCells, {
-        scale: 1, opacity: 1,
+        scale: 1,
         duration: 0.45,
         ease: 'back.out(1.7)',
         stagger: { amount: 0.7, from: 'center' },
         onComplete() {
+          // Remove GSAP inline transform so CSS transition + pulse/echo classes work
+          gsap.set(heartCells, { clearProps: 'transform,transformOrigin' });
           heartbeat();
           setInterval(heartbeat, 3000);
         },
