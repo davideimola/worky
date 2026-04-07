@@ -107,8 +107,7 @@ const stats = [
 <script>
   import gsap from 'gsap';
 
-  const wrap = document.getElementById('ossGrid') as HTMLDivElement | null;
-  if (wrap) {
+  const wrap = document.getElementById('ossGrid') as HTMLDivElement;
 
   // ─── Heart: 10x10 pattern shifted +3/+3 into 16x16 grid (same as reference) ───
   const oldHeart = [
@@ -184,7 +183,7 @@ const stats = [
     if (!entry.isIntersecting) return;
     io.disconnect();
 
-    gsap.to(wrap!, { opacity: 1, duration: 0.3, ease: 'power2.out' });
+    gsap.to(wrap, { opacity: 1, duration: 0.3, ease: 'power2.out' });
     gsap.to(heartCells, {
       scale: 1,
       duration: 0.5,
@@ -199,5 +198,4 @@ const stats = [
   }, { threshold: 0.2 });
 
   io.observe(wrap);
-  } // end if (wrap)
 </script>
