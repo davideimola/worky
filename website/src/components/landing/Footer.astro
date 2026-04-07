@@ -27,8 +27,37 @@ const links = [
     </div>
 
     <div class="footer-bottom">
-      <span class="footer-copy">© {year} Davide Imola. MIT License.</span>
-      <span class="footer-made">Made with <span class="heart">♥</span> and Go</span>
+      <span class="footer-copy">© {year} Davide Imola. Apache 2.0.</span>
+      <span class="footer-made">
+        Made with
+        <svg id="footerHeart" viewBox="0 0 27 23" width="13" height="11" fill="#00C2A0" style="display:inline-block;vertical-align:middle;margin:0 2px;" aria-hidden="true">
+          <rect x="4"  y="0"  width="3" height="3"/>
+          <rect x="20" y="0"  width="3" height="3"/>
+          <rect x="0"  y="4"  width="3" height="3"/>
+          <rect x="4"  y="4"  width="3" height="3"/>
+          <rect x="8"  y="4"  width="3" height="3"/>
+          <rect x="16" y="4"  width="3" height="3"/>
+          <rect x="20" y="4"  width="3" height="3"/>
+          <rect x="24" y="4"  width="3" height="3"/>
+          <rect x="0"  y="8"  width="3" height="3"/>
+          <rect x="4"  y="8"  width="3" height="3"/>
+          <rect x="8"  y="8"  width="3" height="3"/>
+          <rect x="12" y="8"  width="3" height="3"/>
+          <rect x="16" y="8"  width="3" height="3"/>
+          <rect x="20" y="8"  width="3" height="3"/>
+          <rect x="24" y="8"  width="3" height="3"/>
+          <rect x="4"  y="12" width="3" height="3"/>
+          <rect x="8"  y="12" width="3" height="3"/>
+          <rect x="12" y="12" width="3" height="3"/>
+          <rect x="16" y="12" width="3" height="3"/>
+          <rect x="20" y="12" width="3" height="3"/>
+          <rect x="8"  y="16" width="3" height="3"/>
+          <rect x="12" y="16" width="3" height="3"/>
+          <rect x="16" y="16" width="3" height="3"/>
+          <rect x="12" y="20" width="3" height="3"/>
+        </svg>
+        and Go
+      </span>
     </div>
   </div>
 </footer>
@@ -97,11 +126,21 @@ const links = [
     font-size: 11px;
     color: rgba(255,255,255,0.2);
   }
-  .heart { color: var(--teal); }
-
   @media (max-width: 640px) {
     .footer-inner { flex-direction: column; gap: 32px; }
     .footer-nav { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 16px; }
     .footer-bottom { flex-direction: column; gap: 8px; align-items: flex-start; }
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+  gsap.to('#footerHeart', {
+    scale: 1.3,
+    duration: 0.5,
+    ease: 'power1.inOut',
+    repeat: -1,
+    yoyo: true,
+    transformOrigin: '50% 50%',
+  });
+</script>

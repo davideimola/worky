@@ -8,23 +8,23 @@ const GH_URL = 'https://github.com/davideimola/worky';
 
   <!-- Centered copy -->
   <div class="hero-center">
-    <div class="hero-badge" style="opacity:0;animation:fadeUp 0.55s ease 0.05s forwards;">
+    <div class="hero-badge">
       <span class="hero-badge-dot"></span>
-      <span class="hero-badge-text">Open source · Go library · MIT License</span>
+      <span class="hero-badge-text">Open source · Go library · Apache 2.0</span>
     </div>
 
-    <h1 class="hero-headline" style="opacity:0;animation:fadeUp 0.55s ease 0.15s forwards;">
+    <h1 class="hero-headline">
       The workshop that<br />students actually <em>complete.</em>
     </h1>
 
-    <span class="hero-rule" style="opacity:0;animation:fadeUp 0.55s ease 0.22s forwards;"></span>
+    <span class="hero-rule"></span>
 
-    <p class="hero-sub" style="opacity:0;animation:fadeUp 0.55s ease 0.28s forwards;">
+    <p class="hero-sub">
       Guide your students step-by-step, from setup to completion, distributed as a single executable file.
       Participants run one command, their browser opens, and automatic validators handle the rest.
     </p>
 
-    <div class="hero-actions" style="opacity:0;animation:fadeUp 0.55s ease 0.36s forwards;">
+    <div class="hero-actions">
       <a href="/getting-started/" class="btn-primary">
         Get Started
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -41,7 +41,7 @@ const GH_URL = 'https://github.com/davideimola/worky';
   </div>
 
   <!-- Workshop preview mockup -->
-  <div class="ws-preview-wrap" style="opacity:0;animation:fadeUp 0.7s ease 0.48s forwards;">
+  <div class="ws-preview-wrap">
     <div class="ws-preview">
       <!-- Window bar -->
       <div class="ws-bar">
@@ -348,10 +348,15 @@ const GH_URL = 'https://github.com/davideimola/worky';
     .ws-body { grid-template-columns: 1fr; }
     .ws-sidebar { display: none; }
   }
+
+  /* GSAP sets initial states — keep hidden until it runs */
+  .hero-badge, .hero-headline, .hero-rule, .hero-sub, .hero-actions, .ws-preview-wrap { opacity: 0; }
 </style>
 
 <script>
-  // ─── Hero grid ───
+  import gsap from 'gsap';
+
+  // ─── Hero grid background ───
   const grid = document.getElementById('heroBgGrid') as HTMLDivElement;
   if (grid) {
     const cellSize = 52;
@@ -366,84 +371,67 @@ const GH_URL = 'https://github.com/davideimola/worky';
     }
   }
 
-  // ─── Workshop mockup animation ───
-  const steps = [
-    { title: 'Create the namespace', desc: 'Set up an isolated namespace for your workshop resources in the cluster.', cmd: 'kubectl create namespace my-workshop', check: 'Namespace my-workshop found' },
-    { title: 'Deploy the application', desc: 'Apply the deployment manifest to create your first pod in the my-workshop namespace.', cmd: 'kubectl apply -f deployment.yaml', check: 'Deployment found — step complete' },
-    { title: 'Configure ingress', desc: 'Add an ingress rule to route external traffic to your deployed service.', cmd: 'kubectl apply -f ingress.yaml', check: 'Ingress rule active' },
-    { title: 'Expose the service', desc: 'Create a LoadBalancer service to make your app reachable from outside the cluster.', cmd: 'kubectl expose deploy workshop-app --type=LoadBalancer', check: 'Service exposed on port 80' },
-    { title: 'Scale the deployment', desc: 'Scale your deployment to 3 replicas for high availability.', cmd: 'kubectl scale deploy workshop-app --replicas=3', check: '3 replicas running — workshop complete!' },
-  ];
+  // ─── Hero entrance (GSAP timeline) ───
+  gsap.timeline({ defaults: { ease: 'power2.out' }, delay: 0.1 })
+    .fromTo('.hero-badge',       { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.55 })
+    .fromTo('.hero-headline',    { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55 }, '-=0.35')
+    .fromTo('.hero-rule',        { opacity: 0, scaleX: 0, transformOrigin: 'left' }, { opacity: 1, scaleX: 1, duration: 0.4 }, '-=0.3')
+    .fromTo('.hero-sub',         { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.55 }, '-=0.25')
+    .fromTo('.hero-actions',     { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5  }, '-=0.3')
+    .fromTo('.ws-preview-wrap',  { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7  }, '-=0.35');
 
+  // ─── Workshop mockup (GSAP timeline loop) ───
+  const steps = [
+    { title: 'Create the namespace',  desc: 'Set up an isolated namespace for your workshop resources in the cluster.',                             cmd: 'kubectl create namespace my-workshop',                 check: 'Namespace my-workshop found'            },
+    { title: 'Deploy the application', desc: 'Apply the deployment manifest to create your first pod in the my-workshop namespace.',               cmd: 'kubectl apply -f deployment.yaml',                    check: 'Deployment found — step complete'       },
+    { title: 'Configure ingress',      desc: 'Add an ingress rule to route external traffic to your deployed service.',                            cmd: 'kubectl apply -f ingress.yaml',                       check: 'Ingress rule active'                    },
+    { title: 'Expose the service',     desc: 'Create a LoadBalancer service to make your app reachable from outside the cluster.',                 cmd: 'kubectl expose deploy workshop-app --type=LoadBalancer', check: 'Service exposed on port 80'            },
+    { title: 'Scale the deployment',   desc: 'Scale your deployment to 3 replicas for high availability.',                                        cmd: 'kubectl scale deploy workshop-app --replicas=3',      check: '3 replicas running — workshop complete!' },
+  ];
   const labels = ['Create namespace', 'Deploy the app', 'Configure ingress', 'Expose service', 'Scale deployment'];
-  let current = 1;
-  const CYCLE = 6200;
 
   function setStep(idx: number) {
     const s = steps[idx];
-    const titleEl = document.getElementById('wsTitle');
-    const descEl = document.getElementById('wsDesc');
-    const cmdEl = document.getElementById('wsCmd');
-    const idleEl = document.getElementById('wsIdle');
-    const runEl = document.getElementById('wsRunning');
-    const okEl = document.getElementById('wsOk');
-
-    if (titleEl) titleEl.textContent = s.title;
-    if (descEl) descEl.textContent = s.desc;
-    if (cmdEl) cmdEl.innerHTML = s.cmd + '<span class="cursor"></span>';
-    if (idleEl) { idleEl.style.display = 'block'; }
-    if (runEl) { runEl.style.display = 'none'; }
-    if (okEl) { okEl.style.display = 'none'; }
-
-    // Update sidebar
+    (document.getElementById('wsTitle') as HTMLElement).textContent = s.title;
+    (document.getElementById('wsDesc') as HTMLElement).textContent = s.desc;
+    (document.getElementById('wsCmd') as HTMLElement).innerHTML = s.cmd + '<span class="cursor"></span>';
     for (let i = 0; i < 5; i++) {
-      const row = document.getElementById(`srow${i}`);
+      const row = document.getElementById(`srow${i}`)!;
       const icon = document.getElementById(`sicon${i}`);
       const label = document.getElementById(`slabel${i}`);
-      if (!row) continue;
       row.className = 'ws-step-row' + (i < idx ? ' done' : i === idx ? ' active' : ' locked');
-      if (icon) icon.textContent = i < idx ? '✓' : i === idx ? String(idx + 1).padStart(2, '0') : '—';
+      if (icon)  icon.textContent  = i < idx ? '✓' : i === idx ? String(idx + 1).padStart(2, '0') : '—';
       if (label) label.textContent = labels[i];
-
-      // Update progress pips
-      const pip = document.getElementById(`pip${i}`);
-      if (pip) { pip.className = 'ws-prog-pip' + (i < idx ? ' done' : i === idx ? ' active' : ''); }
+      const pip = document.getElementById(`pip${i}`)!;
+      pip.className = 'ws-prog-pip' + (i < idx ? ' done' : i === idx ? ' active' : '');
     }
   }
 
-  function runCycle() {
-    setStep(current);
-    // After 2.5s show spinner
-    setTimeout(() => {
-      const runEl = document.getElementById('wsRunning');
-      const idleEl = document.getElementById('wsIdle');
-      if (idleEl) idleEl.style.display = 'none';
-      if (runEl) { runEl.style.display = 'flex'; }
-    }, 2500);
-    // After 4.2s show ok
-    setTimeout(() => {
-      const runEl = document.getElementById('wsRunning');
-      const okEl = document.getElementById('wsOk');
-      const s = steps[current];
-      if (okEl) { okEl.textContent = '✓  ' + s.check; okEl.style.display = 'flex'; }
-      if (runEl) runEl.style.display = 'none';
-    }, 4200);
-    // After 5.5s unlock next & advance
-    setTimeout(() => {
-      const next = (current + 1) % 5;
-      const nextRow = document.getElementById(`srow${next === 0 ? 0 : next}`);
-      if (nextRow && next !== 0) {
-        nextRow.classList.add('unlocking');
-        setTimeout(() => nextRow.classList.remove('unlocking'), 700);
+  function runCycle(idx: number) {
+    setStep(idx);
+    const idle    = document.getElementById('wsIdle')    as HTMLElement;
+    const running = document.getElementById('wsRunning') as HTMLElement;
+    const ok      = document.getElementById('wsOk')      as HTMLElement;
+    idle.style.display = 'block'; running.style.display = 'none'; ok.style.display = 'none';
+
+    gsap.timeline({
+      onComplete() {
+        const next = idx >= 4 ? 1 : idx + 1;
+        const nextRow = document.getElementById(`srow${next}`)!;
+        gsap.fromTo(nextRow,
+          { backgroundColor: 'rgba(0,194,160,0.18)' },
+          { backgroundColor: 'transparent', duration: 0.6, ease: 'power2.out' }
+        );
+        runCycle(next);
       }
-      current = next === 0 ? 1 : next; // loop back to step 1 after last
-      if (next === 0) current = 1;
-    }, 5500);
+    })
+      .to({}, { duration: 2.5 })
+      .call(() => { idle.style.display = 'none'; running.style.display = 'flex'; })
+      .to({}, { duration: 1.7 })
+      .call(() => { ok.textContent = '✓  ' + steps[idx].check; running.style.display = 'none'; ok.style.display = 'flex'; })
+      .to({}, { duration: 1.8 });
   }
 
-  // Start after hero animation completes
-  setTimeout(() => {
-    runCycle();
-    setInterval(runCycle, CYCLE);
-  }, 1200);
+  // Start after hero entrance finishes
+  gsap.delayedCall(1.5, () => runCycle(1));
 </script>
