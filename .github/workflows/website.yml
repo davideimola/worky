@@ -40,6 +40,6 @@ jobs:
           args: >-
             --no-progress
             --exclude '^https?://'
-            --base website/dist
+            --root-dir ${{ github.workspace }}/website/dist
             website/dist
           fail: true
