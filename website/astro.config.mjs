@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import vercel from '@astrojs/vercel';
 
@@ -69,6 +70,7 @@ export default defineConfig({
         },
       ],
     }),
+    sitemap(),
     react(),
   ],
 });

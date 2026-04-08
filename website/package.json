@@ -11,6 +11,7 @@
   "packageManager": "pnpm@10.0.0",
   "dependencies": {
     "@astrojs/react": "^5.0.3",
+    "@astrojs/sitemap": "^3.7.2",
     "@astrojs/starlight": "^0.38.3",
     "@astrojs/vercel": "^10.0.4",
     "@vercel/analytics": "^1.6.1",
