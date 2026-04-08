@@ -14,19 +14,20 @@
 
     <!-- Pixel arrow -->
     <div class="friction-arrow">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
-        <rect x="0"  y="14" width="4" height="4" fill="rgba(0,194,160,0.35)" />
-        <rect x="4"  y="14" width="4" height="4" fill="rgba(0,194,160,0.45)" />
-        <rect x="8"  y="14" width="4" height="4" fill="rgba(0,194,160,0.55)" />
-        <rect x="12" y="14" width="4" height="4" fill="rgba(0,194,160,0.65)" />
-        <rect x="16" y="14" width="4" height="4" fill="rgba(0,194,160,0.75)" />
-        <rect x="20" y="14" width="4" height="4" fill="rgba(0,194,160,0.85)" />
-        <rect x="24" y="14" width="4" height="4" fill="var(--teal)" />
-        <rect x="20" y="10" width="4" height="4" fill="rgba(0,194,160,0.6)" />
-        <rect x="24" y="10" width="4" height="4" fill="var(--teal)" />
-        <rect x="28" y="14" width="4" height="4" fill="var(--teal)" />
-        <rect x="20" y="18" width="4" height="4" fill="rgba(0,194,160,0.6)" />
-        <rect x="24" y="18" width="4" height="4" fill="var(--teal)" />
+      <svg id="pixelArrow" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <!-- shaft: pixels 0–6 (left to right), tip: 3 pixels forming arrowhead -->
+        <rect class="ap ap0" x="0"  y="14" width="4" height="4" fill="rgba(0,194,160,0.35)" />
+        <rect class="ap ap1" x="4"  y="14" width="4" height="4" fill="rgba(0,194,160,0.45)" />
+        <rect class="ap ap2" x="8"  y="14" width="4" height="4" fill="rgba(0,194,160,0.55)" />
+        <rect class="ap ap3" x="12" y="14" width="4" height="4" fill="rgba(0,194,160,0.65)" />
+        <rect class="ap ap4" x="16" y="14" width="4" height="4" fill="rgba(0,194,160,0.75)" />
+        <rect class="ap ap5" x="20" y="14" width="4" height="4" fill="rgba(0,194,160,0.85)" />
+        <rect class="ap ap6" x="24" y="14" width="4" height="4" fill="var(--teal)" />
+        <rect class="ap ap7" x="20" y="10" width="4" height="4" fill="rgba(0,194,160,0.6)" />
+        <rect class="ap ap8" x="24" y="10" width="4" height="4" fill="var(--teal)" />
+        <rect class="ap ap9" x="28" y="14" width="4" height="4" fill="var(--teal)" />
+        <rect class="ap ap10" x="20" y="18" width="4" height="4" fill="rgba(0,194,160,0.6)" />
+        <rect class="ap ap11" x="24" y="18" width="4" height="4" fill="var(--teal)" />
       </svg>
     </div>
 
@@ -106,3 +107,33 @@
     .friction-arrow { transform: rotate(90deg); }
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+
+  // Shaft pixels left→right (indices 0–6), then arrowhead pixels (7–11)
+  // Animation: each pixel pulses to full opacity then fades back, creating
+  // a "marching" light that travels from tail to tip in a loop.
+  const shaft  = [0,1,2,3,4,5,6];
+  const head   = [7,8,9,10,11];
+  const pixels = [...shaft, ...head].map(i =>
+    document.querySelector<SVGRectElement>(`.ap${i}`)
+  ).filter(Boolean) as SVGRectElement[];
+
+  const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.2, defaults: { ease: 'power1.inOut' } });
+
+  // Shaft: light travels pixel by pixel (each 0.07s apart, 0.18s duration)
+  shaft.forEach((_, i) => {
+    tl.to(pixels[i], { opacity: 1, duration: 0.18 }, i * 0.07)
+      .to(pixels[i], { opacity: 0.3, duration: 0.18 }, i * 0.07 + 0.22);
+  });
+
+  // Arrowhead: all 3 tip groups flash together at the end of the shaft wave
+  const tipStart = shaft.length * 0.07 + 0.05;
+  tl.to([pixels[7], pixels[8], pixels[9], pixels[10], pixels[11]], {
+    opacity: 1, duration: 0.15,
+  }, tipStart)
+  .to([pixels[7], pixels[8], pixels[9], pixels[10], pixels[11]], {
+    opacity: 0.6, duration: 0.2,
+  }, tipStart + 0.2);
+</script>
