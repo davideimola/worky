@@ -1,0 +1,46 @@
+name: Website
+
+on:
+  push:
+    branches: [main]
+    paths: [website/**]
+  pull_request:
+    paths: [website/**]
+
+jobs:
+  build:
+    name: Build & Link Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: website/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --exclude-mail
+            --exclude '^https?://'
+            --base website/dist
+            website/dist
+          fail: true
