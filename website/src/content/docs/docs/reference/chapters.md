@@ -35,7 +35,7 @@ The `worky new chapter` CLI command sets this automatically.
 
 ### Checks
 
-List of `worky.Check` values that must all pass for the chapter to be marked complete. See [Checks](/reference/checks/built-in/) for the full reference.
+List of `worky.Check` values that must all pass for the chapter to be marked complete. See [Checks](/docs/reference/checks/built-in/) for the full reference.
 
 ---
 
@@ -71,4 +71,4 @@ Or manually — add the entry to `Chapters` and create `site/<id>-<slug>/index.m
 
 ---
 
-For the runtime commands that operate on chapters (`check`, `status`, `unlock`, `reset`) see [Runtime commands](/runtime/).
+For the runtime commands that operate on chapters (`check`, `status`, `unlock`, `reset`) see [Runtime commands](/docs/runtime/).

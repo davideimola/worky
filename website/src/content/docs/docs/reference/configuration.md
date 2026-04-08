@@ -71,7 +71,7 @@ worky.New(worky.Config{
 })
 ```
 
-The embedded FS must contain a `site/` subdirectory. See [Customization](/customization/) for the full site layout, file reference, and CSS classes.
+The embedded FS must contain a `site/` subdirectory. See [Customization](/docs/customization/) for the full site layout, file reference, and CSS classes.
 
 **Without embedded site (built-in UI):**
 
@@ -95,7 +95,7 @@ Chapters: []worky.Chapter{
 }
 ```
 
-Ordered list of chapters. The first chapter is always unlocked. See [Chapters](/reference/chapters/) for the full `Chapter` struct reference.
+Ordered list of chapters. The first chapter is always unlocked. See [Chapters](/docs/reference/chapters/) for the full `Chapter` struct reference.
 
 ---
 

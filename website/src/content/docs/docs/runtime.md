@@ -46,7 +46,7 @@ Runs all checks for a chapter. If `chapter-id` is omitted, auto-detects the firs
 ./my-workshop check 01     # explicit
 ```
 
-If all checks pass the chapter is marked complete and the next one is unlocked. See [Checks](/reference/checks/built-in/) for the full list of built-in validation functions.
+If all checks pass the chapter is marked complete and the next one is unlocked. See [Checks](/docs/reference/checks/built-in/) for the full list of built-in validation functions.
 
 ---
 
@@ -101,4 +101,4 @@ Stops a server started with `--detach`.
 ./my-workshop stop
 ```
 
-If the process is unresponsive, see [Troubleshooting](/troubleshooting/).
+If the process is unresponsive, see [Troubleshooting](/docs/troubleshooting/).

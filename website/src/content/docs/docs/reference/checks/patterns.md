@@ -93,5 +93,5 @@ chapters := []worky.Chapter{
 
 ## Further reading
 
-- [Checks](/reference/checks/) — built-in check functions reference
-- [Troubleshooting](/troubleshooting/) — common check error messages and how to fix them
+- [Checks](/docs/reference/checks/) — built-in check functions reference
+- [Troubleshooting](/docs/troubleshooting/) — common check error messages and how to fix them

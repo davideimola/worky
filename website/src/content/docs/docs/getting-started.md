@@ -13,7 +13,7 @@ description: Install Worky, scaffold your first workshop, and distribute it as a
 go install github.com/davideimola/worky/cmd/worky@latest
 ```
 
-See [CLI](/cli/) for the full command reference.
+See [CLI](/docs/cli/) for the full command reference.
 
 ## 2. Scaffold a new workshop
 
@@ -51,7 +51,7 @@ go mod tidy
 make serve
 ```
 
-Your workshop is live at `http://localhost:8080`. Edit `site/00-setup/index.md` to write chapter content, or add checks to `main.go`. See [Customization](/customization/) for site layout and CSS options.
+Your workshop is live at `http://localhost:8080`. Edit `site/00-setup/index.md` to write chapter content, or add checks to `main.go`. See [Customization](/docs/customization/) for site layout and CSS options.
 
 ---
 
@@ -173,13 +173,13 @@ To build locally instead:
 make release   # produces bin/ with binaries for all platforms
 ```
 
-Participants download the binary for their platform, run `./my-workshop serve --open`, and use `./my-workshop check` to progress through chapters. See [Runtime commands](/runtime/) for the full reference.
+Participants download the binary for their platform, run `./my-workshop serve --open`, and use `./my-workshop check` to progress through chapters. See [Runtime commands](/docs/runtime/) for the full reference.
 
 ---
 
 ## What's next
 
-- [Reference](/reference/configuration/) — `Config`, `Chapter`, and `Check` struct reference
-- [Checks](/reference/checks/built-in/) — built-in validation functions
-- [CLI](/cli/) — `worky init`, `worky new chapter`, `worky build`
-- [Customization](/customization/) — site layout, CSS classes, Markdown rendering
+- [Reference](/docs/reference/configuration/) — `Config`, `Chapter`, and `Check` struct reference
+- [Checks](/docs/reference/checks/built-in/) — built-in validation functions
+- [CLI](/docs/cli/) — `worky init`, `worky new chapter`, `worky build`
+- [Customization](/docs/customization/) — site layout, CSS classes, Markdown rendering

@@ -125,4 +125,4 @@ Once you answer the questions, it automatically collects your environment detail
 
 ---
 
-For the commands available inside each workshop binary (`serve`, `check`, `status`, etc.) see [Runtime commands](/runtime/).
+For the commands available inside each workshop binary (`serve`, `check`, `status`, etc.) see [Runtime commands](/docs/runtime/).

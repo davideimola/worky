@@ -45,7 +45,7 @@ func main() {
 | `site/{slug}/index.html` | One per chapter | Chapter page as raw HTML. |
 | `site/{slug}/index.md` | One per chapter | Chapter page as Markdown (rendered server-side via Goldmark). |
 
-Each chapter directory name must match the chapter's slug. The slug is derived from the chapter `ID` and `Name` fields — see the [Chapters](/reference/chapters/) page for the convention.
+Each chapter directory name must match the chapter's slug. The slug is derived from the chapter `ID` and `Name` fields — see the [Chapters](/docs/reference/chapters/) page for the convention.
 
 ---
 
@@ -93,4 +93,4 @@ Markdown pages are a good choice for text-heavy chapters that do not need a cust
 
 ## Worky init scaffold
 
-Running [`worky init <name>`](/cli/) generates a ready-to-use `site/` directory with `index.html`, `workshop.css`, and `workshop-progress.js` pre-populated. Use those files as the starting point for customization rather than writing from scratch.
+Running [`worky init <name>`](/docs/cli/) generates a ready-to-use `site/` directory with `index.html`, `workshop.css`, and `workshop-progress.js` pre-populated. Use those files as the starting point for customization rather than writing from scratch.

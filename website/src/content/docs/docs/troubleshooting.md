@@ -148,5 +148,5 @@ rm ~/.worky/server.pid
 
 ## Further reading
 
-- [Built-in checks](/reference/checks/built-in/) — full list of built-in check functions and their error messages
-- [Patterns](/reference/checks/patterns/) — timeout, retry, and custom check patterns
+- [Built-in checks](/docs/reference/checks/built-in/) — full list of built-in check functions and their error messages
+- [Patterns](/docs/reference/checks/patterns/) — timeout, retry, and custom check patterns
