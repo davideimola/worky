@@ -12,7 +12,7 @@ export default defineConfig({
       title: 'Worky',
       description: 'Build self-contained interactive workshops as a single Go binary.',
       logo: {
-        src: './public/images/logo.svg',
+        src: './public/logo.svg',
         alt: 'Worky',
       },
       social: [
@@ -50,6 +50,10 @@ export default defineConfig({
         { label: 'Showcase',        link: '/showcase/' },
       ],
       head: [
+        {
+          tag: 'link',
+          attrs: { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
+        },
         {
           tag: 'meta',
           attrs: { property: 'og:image', content: 'https://worky.davideimola.dev/images/og-image.png' },
