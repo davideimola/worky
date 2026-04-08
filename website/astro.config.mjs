@@ -11,6 +11,7 @@ export default defineConfig({
     starlight({
       title: 'Docs',
       description: 'Build self-contained interactive workshops as a single Go binary.',
+      favicon: '/icon.svg',
       logo: {
         src: './public/logo.svg',
         alt: 'Worky',
