@@ -123,27 +123,7 @@ starlight-theme-select,
 
 /* ─── Navbar ─── */
 
-/* Logo: scale down and vertically center */
-.site-title img,
-header .site-title img {
-  height: 22px !important;
-  width: auto !important;
-}
-
-/* DOCS badge */
-.site-title {
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-teal) !important;
-  background: rgba(0, 194, 160, 0.10);
-  border: 0.5px solid rgba(0, 194, 160, 0.25);
-  border-radius: 4px;
-  padding: 2px 7px;
-  align-self: center;
-}
+/* SiteTitle is overridden via custom component — no styles needed here */
 
 header.header {
   --sl-nav-height: 3rem;

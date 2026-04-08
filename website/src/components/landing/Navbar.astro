@@ -10,6 +10,7 @@ const GH_URL = 'https://github.com/davideimola/worky';
       <li><a href="#how" class="nav-link">How it works</a></li>
       <li><a href="#features" class="nav-link">For creators</a></li>
       <li><a href="#oss" class="nav-link">Open source</a></li>
+      <li><a href="/docs/" class="nav-link nav-link--docs">Docs</a></li>
       <li>
         <a href={GH_URL} class="nav-cta">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;">
@@ -31,6 +32,8 @@ const GH_URL = 'https://github.com/davideimola/worky';
     transition: color 0.2s;
   }
   .nav-link:hover { color: #fff; }
+  .nav-link--docs { color: var(--teal); }
+  .nav-link--docs:hover { color: #fff; }
   .nav-cta {
     font-family: var(--mono);
     font-size: 12px;

@@ -14,6 +14,10 @@ export default defineConfig({
       logo: {
         src: './public/logo.svg',
         alt: 'Worky',
+        replacesTitle: true,
+      },
+      components: {
+        SiteTitle: './src/components/starlight/SiteTitle.astro',
       },
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/davideimola/worky' },
@@ -27,27 +31,27 @@ export default defineConfig({
         './src/styles/starlight-theme.css',
       ],
       sidebar: [
-        { label: 'Getting Started', link: '/getting-started/' },
-        { label: 'CLI',             link: '/cli/' },
-        { label: 'Runtime',         link: '/runtime/' },
-        { label: 'Customization',   link: '/customization/' },
+        { label: 'Getting Started', link: '/docs/getting-started/' },
+        { label: 'CLI',             link: '/docs/cli/' },
+        { label: 'Runtime',         link: '/docs/runtime/' },
+        { label: 'Customization',   link: '/docs/customization/' },
         {
           label: 'Reference',
           collapsed: false,
           items: [
-            { label: 'Configuration', link: '/reference/configuration/' },
-            { label: 'Chapters',      link: '/reference/chapters/' },
+            { label: 'Configuration', link: '/docs/reference/configuration/' },
+            { label: 'Chapters',      link: '/docs/reference/chapters/' },
             {
               label: 'Checks',
               items: [
-                { label: 'Built-in', link: '/reference/checks/built-in/' },
-                { label: 'Patterns', link: '/reference/checks/patterns/' },
+                { label: 'Built-in', link: '/docs/reference/checks/built-in/' },
+                { label: 'Patterns', link: '/docs/reference/checks/patterns/' },
               ],
             },
           ],
         },
-        { label: 'Troubleshooting', link: '/troubleshooting/' },
-        { label: 'Showcase',        link: '/showcase/' },
+        { label: 'Troubleshooting', link: '/docs/troubleshooting/' },
+        { label: 'Showcase',        link: '/docs/showcase/' },
       ],
       head: [
         {
