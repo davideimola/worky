@@ -137,7 +137,6 @@ const GH_URL = 'https://github.com/davideimola/worky';
     inset: 0;
     background: radial-gradient(ellipse 80% 60% at 50% 40%, transparent 10%, var(--midnight) 75%);
     pointer-events: none;
-    z-index: 1;
   }
   :global(.hero-bg-cell) {
     border: 0.5px solid rgba(255,255,255,0.025);
@@ -259,6 +258,7 @@ const GH_URL = 'https://github.com/davideimola/worky';
   /* ─── Workshop Preview ─── */
   .ws-preview-wrap {
     position: relative;
+    z-index: 5;
     max-width: 860px;
     width: 100%;
     margin-top: 60px;
