@@ -132,12 +132,12 @@ const GH_URL = 'https://github.com/davideimola/worky';
     display: grid;
     background: transparent;
   }
-  .hero-bg-grid::after {
-    content: '';
+  .hero-bg-vignette {
     position: absolute;
     inset: 0;
     background: radial-gradient(ellipse 80% 60% at 50% 40%, transparent 10%, var(--midnight) 75%);
     pointer-events: none;
+    z-index: 1;
   }
   .hero-bg-cell {
     border: 0.5px solid rgba(255,255,255,0.025);
@@ -358,18 +358,33 @@ const GH_URL = 'https://github.com/davideimola/worky';
 
   // ─── Hero grid background ───
   const grid = document.getElementById('heroBgGrid') as HTMLDivElement;
-  if (grid) {
-    const cellSize = 52;
-    const cols = Math.ceil(grid.offsetWidth / cellSize) + 1;
-    const rows = Math.ceil(grid.offsetHeight / cellSize) + 1;
-    grid.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
-    grid.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+  const hero = grid?.closest('.hero') as HTMLElement;
+
+  function buildGrid() {
+    if (!grid || !hero) return;
+    grid.innerHTML = '';
+    const cellSize = 64;
+    const cols = Math.ceil(window.innerWidth / cellSize);
+    const rows = Math.ceil(hero.clientHeight / cellSize);
+    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    grid.style.gridTemplateRows    = `repeat(${rows}, 1fr)`;
     for (let i = 0; i < cols * rows; i++) {
       const cell = document.createElement('div');
       cell.className = 'hero-bg-cell';
       grid.appendChild(cell);
     }
+    // Vignette overlay as last child so it covers all cells
+    const vignette = document.createElement('div');
+    vignette.className = 'hero-bg-vignette';
+    grid.appendChild(vignette);
   }
+
+  buildGrid();
+  let resizeTimer: ReturnType<typeof setTimeout>;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(buildGrid, 200);
+  });
 
   // ─── Hero entrance (GSAP timeline) ───
   gsap.timeline({ defaults: { ease: 'power2.out' }, delay: 0.1 })
