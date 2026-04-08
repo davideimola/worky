@@ -64,24 +64,24 @@ const GH_URL = 'https://github.com/davideimola/worky';
         <!-- Sidebar -->
         <div class="ws-sidebar">
           <div class="ws-step-row done" id="srow0">
-            <div class="ws-step-icon">✓</div>
-            <span class="ws-step-label">Create namespace</span>
+            <div class="ws-step-icon" id="sicon0">✓</div>
+            <span class="ws-step-label" id="slabel0">Create namespace</span>
           </div>
           <div class="ws-step-row active" id="srow1">
             <div class="ws-step-icon" id="sicon1">02</div>
             <span class="ws-step-label" id="slabel1">Deploy the app</span>
           </div>
           <div class="ws-step-row locked" id="srow2">
-            <div class="ws-step-icon">—</div>
-            <span class="ws-step-label">Configure ingress</span>
+            <div class="ws-step-icon" id="sicon2">—</div>
+            <span class="ws-step-label" id="slabel2">Configure ingress</span>
           </div>
           <div class="ws-step-row locked" id="srow3">
-            <div class="ws-step-icon">—</div>
-            <span class="ws-step-label">Expose service</span>
+            <div class="ws-step-icon" id="sicon3">—</div>
+            <span class="ws-step-label" id="slabel3">Expose service</span>
           </div>
           <div class="ws-step-row locked" id="srow4">
-            <div class="ws-step-icon">—</div>
-            <span class="ws-step-label">Scale deployment</span>
+            <div class="ws-step-icon" id="sicon4">—</div>
+            <span class="ws-step-label" id="slabel4">Scale deployment</span>
           </div>
         </div>
         <!-- Content pane -->
@@ -299,13 +299,14 @@ const GH_URL = 'https://github.com/davideimola/worky';
   .ws-prog-pip.active { background: rgba(0,194,160,0.45); }
 
   .ws-body { display: grid; grid-template-columns: 200px 1fr; min-height: 280px; }
-  .ws-sidebar { border-right: 0.5px solid rgba(255,255,255,0.06); padding: 16px 0; }
+  .ws-sidebar { border-right: 0.5px solid rgba(255,255,255,0.06); padding: 16px 0; text-align: left; }
 
   .ws-step-row {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 9px 16px;
+    text-align: left;
     transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
   }
   .ws-step-row.done { opacity: 0.65; }
@@ -415,11 +416,14 @@ const GH_URL = 'https://github.com/davideimola/worky';
       const row = document.getElementById(`srow${i}`)!;
       const icon = document.getElementById(`sicon${i}`);
       const label = document.getElementById(`slabel${i}`);
-      row.className = 'ws-step-row' + (i < idx ? ' done' : i === idx ? ' active' : ' locked');
+      row.classList.remove('done', 'active', 'locked', 'unlocking');
+      row.classList.add(i < idx ? 'done' : i === idx ? 'active' : 'locked');
       if (icon)  icon.textContent  = i < idx ? '✓' : i === idx ? String(idx + 1).padStart(2, '0') : '—';
       if (label) label.textContent = labels[i];
       const pip = document.getElementById(`pip${i}`)!;
-      pip.className = 'ws-prog-pip' + (i < idx ? ' done' : i === idx ? ' active' : '');
+      pip.classList.remove('done', 'active');
+      if (i < idx) pip.classList.add('done');
+      else if (i === idx) pip.classList.add('active');
     }
   }
 
