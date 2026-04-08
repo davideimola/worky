@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="website/static/images/logo.svg" width="120" alt="worky" />
+  <img src="./website/public/logo.svg" width="120" alt="worky" />
 </p>
 
 <h1 align="center">worky</h1>

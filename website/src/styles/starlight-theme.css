@@ -53,9 +53,9 @@
   --sl-text-h4:   1rem;
 
   /* Nav */
-  --sl-nav-height: var(--nav-height);
-  --sl-nav-pad-x:  var(--space-8);
-  --sl-nav-pad-y:  0;
+  --sl-nav-height: 3.5rem;
+  --sl-nav-pad-x:  2rem;
+  --sl-nav-pad-y:  0.5rem;
 
   /* Sidebar */
   --sl-sidebar-width: 260px;
