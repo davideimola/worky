@@ -39,7 +39,6 @@ jobs:
         with:
           args: >-
             --no-progress
-            --exclude-mail
             --exclude '^https?://'
             --base website/dist
             website/dist
