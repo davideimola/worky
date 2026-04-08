@@ -1,4 +1,5 @@
 ---
+import Analytics from '@vercel/analytics/astro';
 interface Props {
   title?: string;
   description?: string;
@@ -20,6 +21,7 @@ const {
   <meta property="og:image" content="https://worky.davideimola.dev/images/og-image.png" />
   <meta property="og:url" content="https://worky.davideimola.dev" />
   <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -67,6 +69,7 @@ const {
 </head>
 <body>
   <slot />
+  <Analytics />
   <script>
     import gsap from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
