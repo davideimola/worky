@@ -35,33 +35,19 @@ const codeFeatures = [
           <span class="code-lang">Go</span>
         </div>
         <div class="code-content">
-          <span class="ck">package</span> <span class="cw">main</span><br/>
-          <br/>
-          <span class="ck">import</span> <span class="cw">(</span><br/>
-          &nbsp;&nbsp;<span class="cs">"embed"</span><br/>
-          &nbsp;&nbsp;<span class="cs">"github.com/davideimola/worky"</span><br/>
-          &nbsp;&nbsp;<span class="cs">"github.com/davideimola/worky/checks"</span><br/>
-          <span class="cw">)</span><br/>
-          <br/>
-          <span class="co">//go:embed site</span><br/>
-          <span class="ck">var</span> <span class="cf">site</span> <span class="ct">embed.FS</span><br/>
-          <br/>
-          <span class="ck">func</span> <span class="cf">main</span><span class="cw">() {</span><br/>
-          &nbsp;&nbsp;<span class="cf">worky</span><span class="cw">.</span><span class="cf">New</span><span class="cw">(</span><span class="cf">worky</span><span class="cw">.</span><span class="ct">Config</span><span class="cw">{"{"}</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">Name</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;<span class="cs">"My Workshop"</span><span class="cw">,</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">Port</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;<span class="cc">7331</span><span class="cw">,</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">SiteFS</span><span class="cw">:</span> <span class="cf">site</span><span class="cw">,</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">Chapters</span><span class="cw">: []</span><span class="cf">worky</span><span class="cw">.</span><span class="ct">Chapter</span><span class="cw">{"{"}</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">{"{"}</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">ID</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;<span class="cs">"00"</span><span class="cw">,</span>&nbsp;<span class="ct">Name</span><span class="cw">:</span> <span class="cs">"Setup"</span><span class="cw">,</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">Slug</span><span class="cw">:</span> <span class="cs">"00-setup"</span><span class="cw">,</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">Checks</span><span class="cw">: []</span><span class="cf">worky</span><span class="cw">.</span><span class="ct">Check</span><span class="cw">{"{"}</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">{"{"}</span><span class="ct">Run</span><span class="cw">:</span> <span class="cf">checks</span><span class="cw">.</span><span class="cf">FileExists</span><span class="cw">(</span><span class="cs">"done.txt"</span><span class="cw">){"}"}</span><span class="cw">,</span><br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">&#125;,</span><br/>
+          <span class="cf">worky</span><span class="cw">.</span><span class="cf">New</span><span class="cw">(</span><span class="cf">worky</span><span class="cw">.</span><span class="ct">Config</span><span class="cw">{"{"}</span><br/>
+          &nbsp;&nbsp;<span class="ct">Name</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cs">"My Workshop"</span><span class="cw">,</span><br/>
+          &nbsp;&nbsp;<span class="ct">Port</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cc">7331</span><span class="cw">,</span><br/>
+          &nbsp;&nbsp;<span class="ct">Chapters</span><span class="cw">: []</span><span class="cf">worky</span><span class="cw">.</span><span class="ct">Chapter</span><span class="cw">{"{"}</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">{"{"}</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">ID</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cs">"00"</span><span class="cw">,</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">Name</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;<span class="cs">"Setup"</span><span class="cw">,</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">Checks</span><span class="cw">: []</span><span class="cf">worky</span><span class="cw">.</span><span class="ct">Check</span><span class="cw">{"{"}</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">{"{"}</span><span class="ct">Run</span><span class="cw">:</span> <span class="cf">checks</span><span class="cw">.</span><span class="cf">FileExists</span><span class="cw">(</span><span class="cs">"done.txt"</span><span class="cw">){"}"}</span><span class="cw">,</span><br/>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">&#125;,</span><br/>
           &nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">&#125;,</span><br/>
-          &nbsp;&nbsp;<span class="cw">}).</span><span class="cf">Run</span><span class="cw">()</span><br/>
-          <span class="cw">{"}"}</span>
+          &nbsp;&nbsp;<span class="cw">&#125;,</span><br/>
+          <span class="cw">}).</span><span class="cf">Run</span><span class="cw">()</span>
         </div>
       </div>
 
