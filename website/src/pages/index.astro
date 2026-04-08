@@ -1,0 +1,24 @@
+---
+import Landing from '../layouts/Landing.astro';
+import Navbar from '../components/landing/Navbar.astro';
+import Hero from '../components/landing/Hero.astro';
+import ProblemStrip from '../components/landing/ProblemStrip.astro';
+import HowItWorks from '../components/landing/HowItWorks.astro';
+import Features from '../components/landing/Features.astro';
+import CodeSection from '../components/landing/CodeSection.astro';
+import OpenSource from '../components/landing/OpenSource.astro';
+import Footer from '../components/landing/Footer.astro';
+---
+<Landing
+  title="Worky — Build interactive workshops as a single Go binary"
+  description="Build self-contained interactive workshops as a single Go binary. One binary, embedded docs, progressive chapter locking."
+>
+  <Navbar />
+  <Hero />
+  <ProblemStrip />
+  <HowItWorks />
+  <Features />
+  <CodeSection />
+  <OpenSource />
+  <Footer />
+</Landing>

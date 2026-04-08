@@ -1,0 +1,49 @@
+---
+// Custom SiteTitle: logo → landing page, DOCS badge → /docs/
+---
+<div class="site-title-wrap">
+  <a href="/" class="logo-link" aria-label="Worky — back to home">
+    <img src="/logo.svg" alt="Worky" height="22" />
+  </a>
+  <a href="/docs/" class="docs-badge">DOCS</a>
+</div>
+
+<style>
+  .site-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-link {
+    display: flex;
+    align-items: center;
+    opacity: 0.9;
+    transition: opacity 0.15s ease;
+    text-decoration: none;
+  }
+  .logo-link:hover { opacity: 1; }
+  .logo-link img { display: block; height: 22px; width: auto; }
+
+  .docs-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #00C2A0;
+    background: rgba(0, 194, 160, 0.10);
+    border: 0.5px solid rgba(0, 194, 160, 0.25);
+    border-radius: 4px;
+    padding: 2px 7px;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    line-height: 1;
+    align-self: center;
+  }
+  .docs-badge:hover {
+    background: rgba(0, 194, 160, 0.18);
+    border-color: rgba(0, 194, 160, 0.5);
+  }
+</style>

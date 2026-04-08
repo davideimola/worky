@@ -1,0 +1,2467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worky — Ship workshops as a single file</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #071122;
+            color: rgba(255, 255, 255, 0.88);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        :root {
+            --midnight: #0E1F3A;
+            --navy: #1A3560;
+            --teal: #00C2A0;
+            --teal-deep: #00A086;
+            --teal-ghost: rgba(0, 194, 160, 0.10);
+            --surface: #0B1828;
+            --white: #112035;
+            --border: rgba(255, 255, 255, 0.07);
+            --slate: rgba(255, 255, 255, 0.45);
+            --code-blue: #61AFEF;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        /* ─── NAVBAR ─── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(14, 31, 58, 0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo-text {
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            margin-left: auto;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-cta {
+            background: var(--teal) !important;
+            color: var(--midnight) !important;
+            padding: 7px 16px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background 0.2s !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--teal-deep) !important;
+            color: #fff !important;
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            min-height: 100vh;
+            background: var(--midnight);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 32px 80px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Interactive Square grid */
+        .hero-bg-grid {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            background: transparent;
+        }
+
+        /* Vignette overlay */
+        .hero-bg-grid::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 40%, transparent 10%, var(--midnight) 75%);
+            pointer-events: none;
+        }
+
+        .hero-bg-cell {
+            border: 0.5px solid rgba(255, 255, 255, 0.025);
+            transition: background 0.8s ease, border-color 0.8s ease;
+        }
+
+        .hero-bg-cell:hover {
+            background: rgba(0, 194, 160, 0.12);
+            border-color: rgba(0, 194, 160, 0.3);
+            transition: background 0s, border-color 0s;
+        }
+
+        /* Subtle teal glow at bottom */
+        .hero-glow {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 260px;
+            background: radial-gradient(ellipse, rgba(0, 194, 160, 0.11) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-center {
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+            max-width: 760px;
+            width: 100%;
+        }
+
+        .hero-center * {
+            pointer-events: auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 194, 160, 0.08);
+            border: 0.5px solid rgba(0, 194, 160, 0.25);
+            border-radius: 999px;
+            padding: 5px 14px 5px 8px;
+            margin-bottom: 32px;
+            opacity: 0;
+            animation: fadeUp 0.55s ease 0.05s forwards;
+        }
+
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--teal);
+            box-shadow: 0 0 6px var(--teal);
+            flex-shrink: 0;
+        }
+
+        .hero-badge-text {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--teal);
+            letter-spacing: 0.06em;
+        }
+
+        h1.hero-headline {
+            font-size: clamp(40px, 5.5vw, 72px);
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.06;
+            letter-spacing: -0.04em;
+            margin-bottom: 22px;
+            opacity: 0;
+            animation: fadeUp 0.55s ease 0.15s forwards;
+        }
+
+        h1.hero-headline em {
+            font-style: normal;
+            color: var(--teal);
+        }
+
+        /* Thin horizontal rule accent under headline */
+        .hero-rule {
+            display: block;
+            width: 40px;
+            height: 1.5px;
+            background: var(--teal);
+            margin: 0 auto 22px;
+            opacity: 0;
+            animation: fadeUp 0.55s ease 0.22s forwards;
+        }
+
+        .hero-sub {
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.46);
+            line-height: 1.72;
+            margin-bottom: 36px;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            animation: fadeUp 0.55s ease 0.28s forwards;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            opacity: 0;
+            animation: fadeUp 0.55s ease 0.36s forwards;
+        }
+
+        .btn-primary {
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 500;
+            background: var(--teal);
+            color: var(--midnight);
+            padding: 12px 22px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+        .btn-primary:hover {
+            background: var(--teal-deep);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            font-family: var(--mono);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: border-color 0.2s, color 0.2s, transform 0.15s;
+        }
+
+        .btn-ghost:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* ─── WORKSHOP PREVIEW (hero visual) ─── */
+        .ws-preview-wrap {
+            position: relative;
+            max-width: 860px;
+            width: 100%;
+            margin-top: 60px;
+            opacity: 0;
+            animation: fadeUp 0.7s ease 0.48s forwards;
+        }
+
+        /* horizontal fade at edges so it bleeds off nicely */
+        .ws-preview-wrap::before,
+        .ws-preview-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 60px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .ws-preview-wrap::before {
+            left: 0;
+            background: linear-gradient(to right, var(--midnight), transparent);
+        }
+
+        .ws-preview-wrap::after {
+            right: 0;
+            background: linear-gradient(to left, var(--midnight), transparent);
+        }
+
+        .ws-preview {
+            background: #07111f;
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 0 0 0.5px rgba(0, 194, 160, 0.08),
+                0 32px 80px rgba(0, 0, 0, 0.55),
+                0 0 60px rgba(0, 194, 160, 0.04) inset;
+        }
+
+        /* Top bar */
+        .ws-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 18px;
+            background: #0a1828;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .ws-bar-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .ws-bar-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .ws-bar-title {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.04em;
+        }
+
+        .ws-bar-progress {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ws-prog-pip {
+            width: 18px;
+            height: 3px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: background 0.4s;
+        }
+
+        .ws-prog-pip.done {
+            background: var(--teal);
+        }
+
+        .ws-prog-pip.active {
+            background: rgba(0, 194, 160, 0.45);
+        }
+
+        /* Body: sidebar + content */
+        .ws-body {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            min-height: 420px;
+        }
+
+        .ws-sidebar {
+            border-right: 0.5px solid rgba(255, 255, 255, 0.06);
+            padding: 16px 0;
+        }
+
+        .ws-step-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .ws-step-row:not(.locked):hover {
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateX(4px);
+        }
+
+        .ws-step-row.done {
+            opacity: 0.65;
+        }
+
+        .ws-step-row.active {
+            background: rgba(0, 194, 160, 0.07);
+        }
+
+        .ws-step-row.active:hover {
+            background: rgba(0, 194, 160, 0.11);
+        }
+
+        .ws-step-row.locked {
+            opacity: 0.28;
+        }
+
+        .ws-step-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: var(--mono);
+            font-size: 9px;
+            font-weight: 500;
+        }
+
+        .ws-step-row.done .ws-step-icon {
+            background: rgba(0, 194, 160, 0.15);
+            color: var(--teal);
+        }
+
+        .ws-step-row.active .ws-step-icon {
+            background: var(--teal);
+            color: var(--midnight);
+        }
+
+        .ws-step-row.locked .ws-step-icon {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .ws-step-label {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ws-step-row.active .ws-step-label {
+            color: #fff;
+        }
+
+        /* Content pane */
+        .ws-content {
+            padding: 24px 28px;
+            text-align: left;
+        }
+
+        .ws-content-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.01em;
+            margin-bottom: 8px;
+        }
+
+        .ws-content-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.65;
+            margin-bottom: 20px;
+            max-width: 420px;
+        }
+
+        .ws-cmd-block {
+            background: #071122;
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 7px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .ws-cmd-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.22);
+            letter-spacing: 0.06em;
+            padding: 7px 14px 6px;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+            display: block;
+        }
+
+        .ws-cmd {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            font-family: var(--mono);
+            font-size: 12px;
+        }
+
+        .ws-cmd-prompt {
+            color: var(--teal);
+        }
+
+        .ws-cmd-text {
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        /* Validator states */
+        .ws-validator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: 11px;
+            min-height: 28px;
+        }
+
+        .ws-val-idle {
+            color: rgba(255, 255, 255, 0.22);
+        }
+
+        .ws-val-running {
+            color: rgba(255, 255, 255, 0.5);
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ws-val-ok {
+            color: var(--teal);
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Spinner for validator */
+        .ws-spinner {
+            width: 10px;
+            height: 10px;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Unlock flash animation */
+        @keyframes unlockFlash {
+            0% {
+                background: rgba(0, 194, 160, 0.18);
+            }
+
+            100% {
+                background: transparent;
+            }
+        }
+
+        .ws-step-row.unlocking {
+            animation: unlockFlash 0.6s ease forwards;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 7px;
+            height: 13px;
+            background: var(--teal);
+            vertical-align: middle;
+            margin-left: 2px;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0
+            }
+        }
+
+        /* ─── FRICTION BANNER (Before/After) ─── */
+        .problem-strip {
+            padding: 40px 0;
+            background: linear-gradient(180deg, rgba(7, 17, 34, 0) 0%, rgba(0, 194, 160, 0.02) 50%, rgba(7, 17, 34, 0) 100%);
+            position: relative;
+            z-index: 10;
+        }
+
+        .problem-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .friction-card {
+            flex: 1;
+            background: #0B1828;
+            border: 0.5px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px 28px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .friction-card.before {
+            border-color: rgba(255, 87, 87, 0.15);
+            background: linear-gradient(180deg, rgba(255, 87, 87, 0.03), #0B1828 40%);
+            opacity: 0.85;
+        }
+
+        .friction-card.before:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+            border-color: rgba(255, 87, 87, 0.3);
+        }
+
+        .fc-head {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.88);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .fc-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .fc-dot.red {
+            background: #FF5757;
+            box-shadow: 0 0 8px rgba(255, 87, 87, 0.4);
+        }
+
+        .fc-dot.green {
+            background: var(--teal);
+            box-shadow: 0 0 10px rgba(0, 194, 160, 0.5);
+            animation: pulseTeal 2s infinite;
+        }
+
+        @keyframes pulseTeal {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 194, 160, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(0, 194, 160, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 194, 160, 0);
+            }
+        }
+
+        .fc-body {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.6;
+        }
+
+        .fc-body s {
+            text-decoration-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .friction-card.after {
+            border-color: rgba(0, 194, 160, 0.3);
+            background: linear-gradient(180deg, rgba(0, 194, 160, 0.06), #0B1828 60%);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .friction-card.after:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: var(--teal);
+            box-shadow: 0 16px 40px rgba(0, 194, 160, 0.12);
+        }
+
+        .friction-card.after .fc-body {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
+        }
+
+        .friction-arrow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+
+        #pxArrowCanvas {
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        @media (max-width: 768px) {
+            .problem-inner {
+                flex-direction: column;
+            }
+
+            .friction-arrow-container {
+                transform: rotate(90deg);
+                margin: 8px 0;
+            }
+        }
+
+        /* ─── SECTIONS ─── */
+        section {
+            padding: 140px 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .sec-label {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--teal);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sec-label::before {
+            content: '';
+            display: block;
+            width: 16px;
+            height: 1px;
+            background: var(--teal);
+        }
+
+        .sec-title {
+            font-size: clamp(26px, 2.8vw, 38px);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            color: rgba(255, 255, 255, 0.92);
+            margin-bottom: 14px;
+        }
+
+        .sec-sub {
+            font-size: 17px;
+            color: var(--slate);
+            line-height: 1.65;
+            max-width: 520px;
+        }
+
+        /* ─── HOW IT WORKS ─── */
+        .how-section {
+            background: #0B1828;
+        }
+
+        .how-header {
+            margin-bottom: 56px;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .step-card {
+            background: #112035;
+            border: 0.5px solid rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            padding: 32px 28px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .step-card:hover {
+            border-color: rgba(0, 194, 160, 0.45);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 194, 160, 0.1) inset;
+        }
+
+        .step-card:active {
+            transform: translateY(0) scale(0.98);
+            transition: all 0.15s cubic-bezier(0.4, 0.0, 1, 1);
+        }
+
+        .step-num {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--teal);
+            letter-spacing: 0.06em;
+            margin-bottom: 18px;
+            display: block;
+        }
+
+        .step-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--teal-ghost);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+        }
+
+        .step-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .step-title {
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: rgba(255, 255, 255, 0.90);
+            margin-bottom: 10px;
+        }
+
+        .step-desc {
+            font-size: 14px;
+            color: var(--slate);
+            line-height: 1.65;
+        }
+
+        .step-code {
+            margin-top: 14px;
+            font-family: var(--mono);
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 7px 11px;
+            border-radius: 5px;
+            color: var(--teal);
+            display: inline-block;
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* ─── FEATURES ─── */
+        .features-section {
+            background: #0E1F3A;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 52px;
+        }
+
+        .feat-card {
+            background: #112035;
+            border: 0.5px solid rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            padding: 26px 26px 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .feat-card:hover {
+            border-color: rgba(0, 194, 160, 0.45);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 194, 160, 0.1) inset;
+        }
+
+        .feat-card:active {
+            transform: translateY(0) scale(0.98);
+            transition: all 0.15s cubic-bezier(0.4, 0.0, 1, 1);
+        }
+
+        .feat-icon {
+            width: 68px;
+            height: 68px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px;
+        }
+
+        .feat-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .feat-title {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: rgba(255, 255, 255, 0.90);
+            margin-bottom: 8px;
+        }
+
+        .feat-desc {
+            font-size: 14px;
+            color: var(--slate);
+            line-height: 1.65;
+        }
+
+        /* ─── CODE SECTION ─── */
+        .code-section {
+            background: #071122;
+            padding: 140px 0;
+        }
+
+        .code-section .sec-title {
+            color: #fff;
+        }
+
+        .code-section .sec-sub {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .code-section .sec-label {
+            color: var(--teal);
+        }
+
+        .code-section .sec-label::before {
+            background: var(--teal);
+        }
+
+        .code-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 56px;
+            align-items: start;
+            margin-top: 52px;
+        }
+
+        .code-block {
+            background: #071122;
+            border: 0.5px solid rgba(255, 255, 255, 0.07);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .code-bar {
+            background: #0A1628;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .code-filename {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.28);
+        }
+
+        .code-lang {
+            margin-left: auto;
+            font-family: var(--mono);
+            font-size: 10px;
+            background: rgba(0, 194, 160, 0.14);
+            color: var(--teal);
+            padding: 2px 8px;
+            border-radius: 3px;
+            letter-spacing: 0.04em;
+        }
+
+        .code-content {
+            padding: 20px;
+            font-family: var(--mono);
+            font-size: 12.5px;
+            line-height: 1.88;
+        }
+
+        .ck {
+            color: #C678DD;
+        }
+
+        .cf {
+            color: #61AFEF;
+        }
+
+        .cs {
+            color: #98C379;
+        }
+
+        .co {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .ct {
+            color: #E5C07B;
+        }
+
+        .cw {
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .cc {
+            color: var(--teal);
+        }
+
+        .code-feats {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .code-feat {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 12px 16px;
+            margin-left: -16px;
+            border: 0.5px solid transparent;
+            border-radius: 10px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .code-feat:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.06);
+            transform: translateX(8px);
+        }
+
+        .code-feat:hover .cf-dot {
+            box-shadow: 0 0 10px rgba(0, 194, 160, 0.8);
+            transform: scale(1.3);
+        }
+
+        .cf-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--teal);
+            border-radius: 50%;
+            margin-top: 7px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .cf-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .cf-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.42);
+            line-height: 1.62;
+        }
+
+        .inline-code {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--teal);
+        }
+
+        /* ─── OSS ─── */
+        .oss-section {
+            background: #0B1828;
+        }
+
+        .oss-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 72px;
+            align-items: center;
+        }
+
+        .oss-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 36px;
+        }
+
+        .oss-stat {
+            background: var(--surface);
+            border: 0.5px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+        }
+
+        .oss-num {
+            font-family: var(--mono);
+            font-size: 26px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.90);
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .oss-lbl {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--slate);
+            letter-spacing: 0.03em;
+        }
+
+        .oss-actions {
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-primary-dark {
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.07);
+            border: 0.5px solid rgba(255, 255, 255, 0.13);
+            color: rgba(255, 255, 255, 0.80);
+            padding: 12px 22px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            align-self: flex-start;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        }
+
+        .btn-primary-dark:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.24);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .oss-grid-wrap {
+            background: transparent;
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 4px;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+
+        .ob {
+            aspect-ratio: 1;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.03);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease, background 0.4s ease;
+            cursor: pointer;
+        }
+
+        .ob:hover {
+            transform: scale(1.4) !important;
+            background: #fff;
+            box-shadow: 0 0 14px rgba(255, 255, 255, 0.8);
+            z-index: 2;
+        }
+
+        .ob.on {
+            background: rgba(0, 194, 160, 0.95);
+            box-shadow: 0 0 8px rgba(0, 194, 160, 0.3);
+        }
+
+        .ob.pulse {
+            transform: scale(1.15) translateZ(0);
+            filter: brightness(1.3);
+            z-index: 10;
+        }
+
+        .ob.echo {
+            background: rgba(0, 194, 160, 0.25);
+            transform: scale(1.13) translateZ(0);
+            box-shadow: 0 0 10px rgba(0, 194, 160, 0.2);
+            z-index: 5;
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            background: var(--midnight);
+            padding: 44px 0;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-logo-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .footer-tagline {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.22);
+            letter-spacing: 0.03em;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 22px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.32);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .badge-powered {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 0.5px solid rgba(255, 255, 255, 0.09);
+            border-radius: 4px;
+            padding: 5px 10px;
+        }
+
+        .badge-text {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.04em;
+        }
+
+        /* ─── ANIMATIONS ─── */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        .d1 {
+            transition-delay: 0.1s;
+        }
+
+        .d2 {
+            transition-delay: 0.2s;
+        }
+
+        .d3 {
+            transition-delay: 0.3s;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+
+            .hero-inner,
+            .code-inner,
+            .oss-inner {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .steps-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* ─── GITHUB ICON ─── */
+        .gh-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* ─── PIXEL ICON ANIMATION ─── */
+        @keyframes pixelOn {
+            0% {
+                opacity: 0;
+            }
+
+            45% {
+                opacity: 1;
+            }
+
+            68% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Icon container brightens on hover */
+        .step-card:hover .step-icon {
+            background: rgba(0, 194, 160, 0.18);
+            transition: background 0.25s ease;
+        }
+
+        .feat-card:hover .feat-icon {
+            background: rgba(0, 194, 160, 0.18);
+            transition: background 0.25s ease;
+        }
+
+        /* Apply animation to all rects on hover */
+        .step-card:hover .step-icon svg rect,
+        .feat-card:hover .feat-icon svg rect {
+            animation: pixelOn 0.42s ease-out both;
+        }
+
+        /* Staggered delays — one per rect child (up to 18) */
+        .step-card:hover .step-icon svg rect:nth-child(1),
+        .feat-card:hover .feat-icon svg rect:nth-child(1) {
+            animation-delay: 0ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(2),
+        .feat-card:hover .feat-icon svg rect:nth-child(2) {
+            animation-delay: 25ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(3),
+        .feat-card:hover .feat-icon svg rect:nth-child(3) {
+            animation-delay: 50ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(4),
+        .feat-card:hover .feat-icon svg rect:nth-child(4) {
+            animation-delay: 75ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(5),
+        .feat-card:hover .feat-icon svg rect:nth-child(5) {
+            animation-delay: 100ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(6),
+        .feat-card:hover .feat-icon svg rect:nth-child(6) {
+            animation-delay: 125ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(7),
+        .feat-card:hover .feat-icon svg rect:nth-child(7) {
+            animation-delay: 150ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(8),
+        .feat-card:hover .feat-icon svg rect:nth-child(8) {
+            animation-delay: 175ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(9),
+        .feat-card:hover .feat-icon svg rect:nth-child(9) {
+            animation-delay: 200ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(10),
+        .feat-card:hover .feat-icon svg rect:nth-child(10) {
+            animation-delay: 225ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(11),
+        .feat-card:hover .feat-icon svg rect:nth-child(11) {
+            animation-delay: 250ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(12),
+        .feat-card:hover .feat-icon svg rect:nth-child(12) {
+            animation-delay: 275ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(13),
+        .feat-card:hover .feat-icon svg rect:nth-child(13) {
+            animation-delay: 300ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(14),
+        .feat-card:hover .feat-icon svg rect:nth-child(14) {
+            animation-delay: 325ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(15),
+        .feat-card:hover .feat-icon svg rect:nth-child(15) {
+            animation-delay: 350ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(16),
+        .feat-card:hover .feat-icon svg rect:nth-child(16) {
+            animation-delay: 375ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(17),
+        .feat-card:hover .feat-icon svg rect:nth-child(17) {
+            animation-delay: 400ms;
+        }
+
+        .step-card:hover .step-icon svg rect:nth-child(18),
+        .feat-card:hover .feat-icon svg rect:nth-child(18) {
+            animation-delay: 425ms;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <img src="img/worky-darkmode.svg" alt="Worky" height="24">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#how">How it works</a></li>
+                <li><a href="#features">For creators</a></li>
+                <li><a href="#oss">Open source</a></li>
+                <li><a href="https://github.com" class="nav-cta">View on GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg-grid"></div>
+        <div class="hero-glow"></div>
+
+        <!-- Centered copy -->
+        <div class="hero-center">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                <span class="hero-badge-text">Open source · Go library · MIT License</span>
+            </div>
+            <h1 class="hero-headline">
+                The workshop that<br>
+                students actually <em>complete.</em>
+            </h1>
+            <span class="hero-rule"></span>
+            <p class="hero-sub">
+                Guide your students step-by-step, from setup to completion, distributed as a single executable file.
+                Participants run one command, their browser opens, and automatic validators handle the rest.
+            </p>
+            <div class="hero-actions">
+                <a href="#how" class="btn-primary" id="hero-get-started">
+                    Get Started
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </a>
+                <a href="https://github.com" class="btn-ghost" id="hero-github">
+                    <svg class="gh-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                    </svg>
+                    View on GitHub
+                </a>
+            </div>
+        </div>
+
+        <!-- Animated workshop preview -->
+        <div class="ws-preview-wrap">
+            <div class="ws-preview">
+                <!-- Window bar -->
+                <div class="ws-bar">
+                    <div class="ws-bar-dots">
+                        <div class="ws-bar-dot" style="background:#FF5F56"></div>
+                        <div class="ws-bar-dot" style="background:#FFBD2E"></div>
+                        <div class="ws-bar-dot" style="background:#27C93F"></div>
+                    </div>
+                    <span class="ws-bar-title" id="wsBarTitle">Kubernetes 101 — localhost:7331</span>
+                    <div class="ws-bar-progress">
+                        <div class="ws-prog-pip done" id="pip0"></div>
+                        <div class="ws-prog-pip active" id="pip1"></div>
+                        <div class="ws-prog-pip" id="pip2"></div>
+                        <div class="ws-prog-pip" id="pip3"></div>
+                        <div class="ws-prog-pip" id="pip4"></div>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="ws-body">
+                    <!-- Step sidebar -->
+                    <div class="ws-sidebar">
+                        <div class="ws-step-row done" id="srow0">
+                            <div class="ws-step-icon">✓</div>
+                            <span class="ws-step-label">Create namespace</span>
+                        </div>
+                        <div class="ws-step-row active" id="srow1">
+                            <div class="ws-step-icon" id="sicon1">02</div>
+                            <span class="ws-step-label" id="slabel1">Deploy the app</span>
+                        </div>
+                        <div class="ws-step-row locked" id="srow2">
+                            <div class="ws-step-icon">—</div>
+                            <span class="ws-step-label">Configure ingress</span>
+                        </div>
+                        <div class="ws-step-row locked" id="srow3">
+                            <div class="ws-step-icon">—</div>
+                            <span class="ws-step-label">Expose service</span>
+                        </div>
+                        <div class="ws-step-row locked" id="srow4">
+                            <div class="ws-step-icon">—</div>
+                            <span class="ws-step-label">Scale deployment</span>
+                        </div>
+                    </div>
+                    <!-- Content pane -->
+                    <div class="ws-content">
+                        <h3 class="ws-content-title" id="wsTitle">Deploy the application</h3>
+                        <p class="ws-content-desc" id="wsDesc">Apply the deployment manifest to create your first pod in
+                            the <code
+                                style="font-family:var(--mono);font-size:11px;color:var(--teal)">my-workshop</code>
+                            namespace.</p>
+                        <div class="ws-cmd-block">
+                            <span class="ws-cmd-label">Run in your terminal</span>
+                            <div class="ws-cmd">
+                                <span class="ws-cmd-prompt">$</span>
+                                <span class="ws-cmd-text" id="wsCmd">kubectl apply -f deployment.yaml<span
+                                        class="cursor"></span></span>
+                            </div>
+                        </div>
+                        <div class="ws-validator">
+                            <div class="ws-val-idle" id="wsIdle">Validator will run automatically&hellip;</div>
+                            <div class="ws-val-running" id="wsRunning">
+                                <div class="ws-spinner"></div>
+                                Checking kubectl get deploy -n my-workshop&hellip;
+                            </div>
+                            <div class="ws-val-ok" id="wsOk">
+                                ✓ &nbsp;Deployment found — step complete
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEM STRIP -->
+    <div class="problem-strip">
+        <div class="problem-inner">
+            <div class="friction-card before">
+                <div class="fc-head"><span class="fc-dot red"></span> Before</div>
+                <div class="fc-body">
+                    <s>30 min setup</s> · <s>Broken envs</s> · <s>Lost before slide 1</s>
+                </div>
+            </div>
+
+            <div class="friction-arrow-container" id="frictionArrowPixel">
+                <canvas id="pxArrowCanvas"></canvas>
+            </div>
+
+            <div class="friction-card after">
+                <div class="fc-head"><span class="fc-dot green"></span> With Worky</div>
+                <div class="fc-body highlight">
+                    One file, zero friction, everyone follows along.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-section" id="how">
+        <div class="container">
+            <div class="how-header reveal">
+                <div class="sec-label">How it works</div>
+                <h2 class="sec-title">From code to classroom<br>in three steps.</h2>
+                <p class="sec-sub">Worky handles distribution so you can focus on teaching.</p>
+            </div>
+            <div class="steps-grid reveal">
+                <div class="step-card">
+                    <span class="step-num">01 — Create</span>
+                    <div class="step-icon">
+                        <!-- TERMINAL: classic >_ prompt inside a window border. 7x7 grid -->
+                        <svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            shape-rendering="crispEdges">
+                            <!-- Top bar -->
+                            <rect x="0" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="0" width="5" height="5" fill="#00C2A0" />
+                            <!-- Walls -->
+                            <rect x="0" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="7" width="5" height="5" fill="#00C2A0" />
+                            <!-- Prompt >_ -->
+                            <rect x="0" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="28" width="5" height="5" fill="#00C2A0" />
+                            <!-- Walls -->
+                            <rect x="0" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="35" width="5" height="5" fill="#00C2A0" />
+                            <!-- Bottom bar -->
+                            <rect x="0" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="42" width="5" height="5" fill="#00C2A0" />
+                        </svg>
+                    </div>
+
+                    <h3 class="step-title">Write your workshop</h3>
+                    <p class="step-desc">Use the Worky Go library to define steps, instructions, and automatic
+                        validators. Each step can check if the participant completed the task before unlocking the next
+                        one.</p>
+                    <span class="step-code">import "github.com/worky/worky"</span>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">02 — Build</span>
+                    <div class="step-icon">
+                        <!-- BRICKS: 3 building blocks stacked perfectly. 7x7 grid -->
+                        <svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            shape-rendering="crispEdges">
+                            <!-- Top center brick (offset above bottom ones) -->
+                            <rect x="14" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="21" width="5" height="5" fill="#00C2A0" />
+                            <!-- Bottom left brick -->
+                            <rect x="0" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="42" width="5" height="5" fill="#00C2A0" />
+                            <!-- Bottom right brick -->
+                            <rect x="28" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="42" width="5" height="5" fill="#00C2A0" />
+                        </svg>
+                    </div>
+
+                    <h3 class="step-title">Compile to one binary</h3>
+                    <p class="step-desc">Run <code
+                            style="font-family:'JetBrains Mono',monospace;font-size:12px;background:#EDF1F5;padding:2px 6px;border-radius:4px;color:#1E6A8A;">worky build</code>
+                        and get a single executable. Everything bundled UI, content, validators. Nothing to install on
+                        the participant's machine.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">03 — Distribute</span>
+                    <div class="step-icon">
+                        <!-- PLAY TRIANGLE: shifted +14px so it is perfectly horizontally centered. 7x7 grid -->
+                        <svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            shape-rendering="crispEdges">
+                            <rect x="14" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="42" width="5" height="5" fill="#00C2A0" />
+                        </svg>
+                    </div>
+
+                    <h3 class="step-title">Participants just run it</h3>
+                    <p class="step-desc">Share the file. Participants download it, run one command, and their browser
+                        opens a guided interface. Step-by-step instructions, automatic validation, zero setup.</p>
+                    <span class="step-code">$ ./my-workshop → localhost:7331</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="reveal">
+                <div class="sec-label">For creators</div>
+                <h2 class="sec-title">Built for developer educators.</h2>
+                <p class="sec-sub">Every decision in Worky is made to reduce friction between you and your participants.
+                    You teach, it handles the rest.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feat-card reveal d1">
+                    <div class="feat-icon">
+                        <!-- CHECKMARK: bold pixel art ✓ on an asymmetric grid. 7x7 grid -->
+                        <svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            shape-rendering="crispEdges">
+                            <!-- Left leg (short, descending) -->
+                            <rect x="0" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="35" width="5" height="5" fill="#00C2A0" />
+                            <!-- Pivot bottom -->
+                            <rect x="14" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="42" width="5" height="5" fill="#00C2A0" />
+                            <!-- Right leg (long, ascending) -->
+                            <rect x="21" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="14" width="5" height="5" fill="#00C2A0" />
+                        </svg>
+                    </div>
+
+                    <h3 class="feat-title">Automatic step validation</h3>
+                    <p class="feat-desc">Define validators in Go that check if participants completed each step
+                        correctly. The workshop knows when they're done, no manual confirmation needed.</p>
+                </div>
+                <div class="feat-card reveal d2">
+                    <div class="feat-icon">
+                        <!-- PACKAGE: box outline + horizontal ribbon stripe = instantly "parcel/file". 7x7 grid -->
+                        <svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            shape-rendering="crispEdges">
+                            <!-- Top edge -->
+                            <rect x="7" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="0" width="5" height="5" fill="#00C2A0" />
+                            <!-- Side rails -->
+                            <rect x="0" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="7" width="5" height="5" fill="#00C2A0" />
+                            <!-- Ribbon stripe (full width) -->
+                            <rect x="0" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="14" width="5" height="5" fill="#00C2A0" />
+                            <!-- Side rails -->
+                            <rect x="0" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="35" width="5" height="5" fill="#00C2A0" />
+                            <!-- Bottom edge -->
+                            <rect x="7" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="42" width="5" height="5" fill="#00C2A0" />
+                        </svg>
+                    </div>
+
+                    <h3 class="feat-title">Single binary distribution</h3>
+                    <p class="feat-desc">One file. No Docker, no npm install, no Python venv. Participants download the
+                        binary, run it, done. Works on macOS, Linux, and Windows.</p>
+                </div>
+                <div class="feat-card reveal d3">
+                    <div class="feat-icon">
+                        <!-- MONITOR: screen rectangle + neck + base stand = browser/UI. 7x7 grid -->
+                        <svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            shape-rendering="crispEdges">
+                            <!-- Top screen edge -->
+                            <rect x="0" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="0" width="5" height="5" fill="#00C2A0" />
+                            <!-- Screen sides -->
+                            <rect x="0" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="14" width="5" height="5" fill="#00C2A0" />
+                            <!-- Bottom screen edge -->
+                            <rect x="0" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="21" width="5" height="5" fill="#00C2A0" />
+                            <!-- Stand neck -->
+                            <rect x="21" y="28" width="5" height="5" fill="#00C2A0" />
+                            <!-- Stand base -->
+                            <rect x="14" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="35" width="5" height="5" fill="#00C2A0" />
+                        </svg>
+                    </div>
+
+                    <h3 class="feat-title">Browser-native UI</h3>
+                    <p class="feat-desc">The workshop UI lives in the browser, no Electron, no GUI toolkit. Clean,
+                        accessible, customisable. Participants follow along in a familiar environment.</p>
+                </div>
+                <div class="feat-card reveal d1">
+                    <div class="feat-icon">
+                        <!-- CURLY BRACES { } — immediately recognizable as code. 7x7 grid -->
+                        <svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            shape-rendering="crispEdges">
+                            <!-- Left brace { -->
+                            <rect x="7" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="0" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="42" width="5" height="5" fill="#00C2A0" />
+                            <!-- Right brace } -->
+                            <rect x="35" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="42" width="5" height="5" fill="#00C2A0" />
+                        </svg>
+                    </div>
+
+                    <h3 class="feat-title">Go-native authoring</h3>
+                    <p class="feat-desc">Write workshops in Go. No YAML, no DSL, no proprietary format. Idiomatic Go
+                        code you can version, test, and refactor like any other project.</p>
+                </div>
+                <div class="feat-card reveal d2">
+                    <div class="feat-icon">
+                        <!-- PADLOCK: arc shackle at top + rectangular body + keyhole. 7x7 grid -->
+                        <svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            shape-rendering="crispEdges">
+                            <!-- Shackle arc -->
+                            <rect x="14" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="0" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="14" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="14" width="5" height="5" fill="#00C2A0" />
+                            <!-- Lock body top edge -->
+                            <rect x="0" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="21" width="5" height="5" fill="#00C2A0" />
+                            <!-- Body sides + keyhole dot -->
+                            <rect x="0" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="28" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="28" width="5" height="5" fill="#00C2A0" />
+                            <!-- Keyhole stem -->
+                            <rect x="0" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="35" width="5" height="5" fill="#00C2A0" />
+                            <!-- Lock body bottom edge -->
+                            <rect x="0" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="42" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="42" width="5" height="5" fill="#00C2A0" />
+                        </svg>
+                    </div>
+
+                    <h3 class="feat-title">Gated progress</h3>
+                    <p class="feat-desc">Each step is locked until the previous one is validated. Keeps everyone at the
+                        right pace, no one skips ahead, no one gets left behind.</p>
+                </div>
+                <div class="feat-card reveal d3">
+                    <div class="feat-icon">
+                        <!-- SLIDERS: 3 horizontal tracks with knobs. 7x7 grid -->
+                        <svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            shape-rendering="crispEdges">
+                            <!-- Slider 1 (Top) -->
+                            <rect x="0" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="0" width="5" height="19" fill="#00C2A0" /> <!-- Knob -->
+                            <rect x="14" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="7" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="7" width="5" height="5" fill="#00C2A0" />
+
+                            <!-- Slider 2 (Middle) -->
+                            <rect x="0" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="21" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="14" width="5" height="19" fill="#00C2A0" /> <!-- Knob -->
+                            <rect x="35" y="21" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="21" width="5" height="5" fill="#00C2A0" />
+
+                            <!-- Slider 3 (Bottom) -->
+                            <rect x="0" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="7" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="14" y="28" width="5" height="19" fill="#00C2A0" /> <!-- Knob -->
+                            <rect x="21" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="28" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="35" y="35" width="5" height="5" fill="#00C2A0" />
+                            <rect x="42" y="35" width="5" height="5" fill="#00C2A0" />
+                        </svg>
+                    </div>
+                    <h3 class="feat-title">Fully customisable</h3>
+                    <p class="feat-desc">The UI template is yours to adapt, colour it, brand it, extend it. Worky stays
+                        out of the way with just a discreet badge at the bottom.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CODE -->
+    <section class="code-section">
+        <div class="container">
+            <div class="reveal">
+                <div class="sec-label">Code</div>
+                <h2 class="sec-title">Looks like Go.<br>Because it is.</h2>
+                <p class="sec-sub">No new syntax to learn. Define your workshop the same way you'd write any Go program,
+                    clear, testable, version-controlled.</p>
+            </div>
+            <div class="code-inner">
+                <div class="code-block reveal">
+                    <div class="code-bar">
+                        <span class="code-filename">workshop.go</span>
+                        <span class="code-lang">Go</span>
+                    </div>
+                    <div class="code-content" style="white-space: pre; overflow-x: auto;"><span
+                            class="ck">package</span> <span class="cw">main</span>
+
+                        <span class="ck">import</span> (
+                        <span class="cs">"embed"</span>
+                        <span class="cs">"github.com/davideimola/worky"</span>
+                        <span class="cs">"github.com/davideimola/worky/checks"</span>
+                        )
+
+                        <span class="co">//go:embed all:site</span>
+                        <span class="ck">var</span> <span class="cw">site</span> <span class="ct">embed.FS</span>
+
+                        <span class="ck">func</span> <span class="cf">main</span>() {
+                        worky.<span class="cf">New</span>(<span class="ct">worky.Config</span>{
+                        Name: <span class="cs">"Docker 101"</span>,
+                        SiteFS: site,
+                        Chapters: []<span class="ct">worky.Chapter</span>{{
+                        Name: <span class="cs">"Setup"</span>,
+                        Checks: []<span class="ct">worky.Check</span>{{
+                        Run: checks.<span class="cf">CommandSucceeds</span>(<span class="cs">"docker"</span>, <span
+                            class="cs">"info"</span>),
+                        }},
+                        }},
+                        }).<span class="cf">Run</span>()
+                        }
+                    </div>
+                </div>
+                <div class="code-feats reveal d2">
+                    <div class="code-feat">
+                        <div class="cf-dot"></div>
+                        <div>
+                            <p class="cf-title">Steps are just functions</p>
+                            <p class="cf-desc">Each step is a Go function that returns an error. Return nil and the step
+                                completes. That's the entire validation API.</p>
+                        </div>
+                    </div>
+                    <div class="code-feat">
+                        <div class="cf-dot"></div>
+                        <div>
+                            <p class="cf-title">Validators are composable</p>
+                            <p class="cf-desc">Use built-ins like <span
+                                    class="inline-code">checks.CommandSucceeds</span>, <span
+                                    class="inline-code">checks.FileExists</span>, <span
+                                    class="inline-code">checks.HTTPStatus</span> —
+                                or write your own. Anything returning an error works.</p>
+                        </div>
+                    </div>
+                    <div class="code-feat">
+                        <div class="cf-dot"></div>
+                        <div>
+                            <p class="cf-title">One command to build</p>
+                            <p class="cf-desc">Run <span class="inline-code">worky build</span> and get a self-contained
+                                binary. Ship it with <span class="inline-code">scp</span>, a GitHub release, or a simple
+                                download link.</p>
+                        </div>
+                    </div>
+                    <a href="https://github.com" class="btn-ghost" style="align-self:flex-start;margin-top:8px;">Read
+                        the docs →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OPEN SOURCE -->
+    <section class="oss-section" id="oss">
+        <div class="container">
+            <div class="oss-inner">
+                <div class="reveal">
+                    <div class="sec-label">Open source</div>
+                    <h2 class="sec-title">Built in the open.<br>Forever free.</h2>
+                    <p class="sec-sub">Worky is MIT-licensed and developed entirely in the open. No enterprise tiers, no
+                        paywalled features, no lock-in. Use it, fork it, contribute to it.</p>
+                    <div class="oss-stats">
+                        <div class="oss-stat">
+                            <div class="oss-num">MIT</div>
+                            <div class="oss-lbl">License</div>
+                        </div>
+                        <div class="oss-stat">
+                            <div class="oss-num">Go</div>
+                            <div class="oss-lbl">Language</div>
+                        </div>
+                        <div class="oss-stat">
+                            <div class="oss-num">0</div>
+                            <div class="oss-lbl">Deps to install</div>
+                        </div>
+                        <div class="oss-stat">
+                            <div class="oss-num">3</div>
+                            <div class="oss-lbl">Platforms</div>
+                        </div>
+                    </div>
+                    <div class="oss-actions">
+                        <a href="https://github.com" class="btn-primary-dark">
+                            <svg class="gh-icon" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                            </svg>
+                            Star on GitHub
+                        </a>
+                    </div>
+                </div>
+                <div class="reveal d2">
+                    <div class="oss-grid-wrap" id="ossGrid"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div>
+                <div class="footer-logo-row">
+                    <img src="img/worky-darkmode.svg" alt="Worky" height="22">
+                </div>
+                <div class="footer-tagline">Open source workshop distribution · Built with Go</div>
+            </div>
+            <ul class="footer-links">
+                <li><a href="https://github.com">GitHub</a></li>
+                <li><a href="#">Docs</a></li>
+                <li><a href="#">MIT License</a></li>
+            </ul>
+            <div class="badge-powered">
+                <span class="badge-text" style="color: rgba(255,255,255,0.4)">powered by</span>
+                <img src="img/worky-darkmode.svg" alt="Worky" height="11">
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll reveal
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.08 });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+        // ─── Workshop hero animation ───
+        const steps = [
+            {
+                title: 'Deploy the application',
+                desc: 'Apply the deployment manifest to create your first pod in the <code style="font-family:var(--mono);font-size:11px;color:var(--teal)">my-workshop</code> namespace.',
+                cmd: 'kubectl apply -f deployment.yaml',
+                validator: 'Checking kubectl get deploy -n my-workshop…',
+                ok: '✓ &nbsp;Deployment found — step complete',
+                rowId: 'srow1', pipId: 'pip1', nextRowId: 'srow2', nextPipId: 'pip2', nextLabel: 'Configure ingress'
+            },
+            {
+                title: 'Configure ingress',
+                desc: 'Create an Ingress resource to expose the deployment externally via <code style="font-family:var(--mono);font-size:11px;color:var(--teal)">nginx</code>.',
+                cmd: 'kubectl apply -f ingress.yaml',
+                validator: 'Checking kubectl get ingress -n my-workshop…',
+                ok: '✓ &nbsp;Ingress configured — step complete',
+                rowId: 'srow2', pipId: 'pip2', nextRowId: 'srow3', nextPipId: 'pip3', nextLabel: 'Expose service'
+            },
+            {
+                title: 'Expose the service',
+                desc: 'Create a <code style="font-family:var(--mono);font-size:11px;color:var(--teal)">LoadBalancer</code> service to give the deployment a stable external IP.',
+                cmd: 'kubectl expose deploy my-app --type=LoadBalancer',
+                validator: 'Checking kubectl get svc -n my-workshop…',
+                ok: '✓ &nbsp;Service exposed — step complete',
+                rowId: 'srow3', pipId: 'pip3', nextRowId: 'srow4', nextPipId: 'pip4', nextLabel: 'Scale deployment'
+            },
+        ];
+        let stepIdx = 0;
+
+        function $(id) { return document.getElementById(id); }
+        function show(el) { el.style.display = 'flex'; }
+        function hide(el) { el.style.display = 'none'; }
+
+        function runStep(s) {
+            // Set content
+            $('wsTitle').textContent = s.title;
+            $('wsTitle').style.opacity = 0;
+            setTimeout(() => { $('wsTitle').style.transition = 'opacity 0.35s'; $('wsTitle').style.opacity = 1; }, 10);
+            $('wsDesc').innerHTML = s.desc;
+            $('wsCmd').innerHTML = s.cmd + '<span class="cursor"></span>';
+
+            // Reset validator
+            show($('wsIdle')); $('wsIdle').style.opacity = 1;
+            hide($('wsRunning')); hide($('wsOk'));
+
+            // Phase 1: Idle (2.2s)
+            setTimeout(() => {
+                $('wsIdle').style.transition = 'opacity 0.3s';
+                $('wsIdle').style.opacity = 0;
+                setTimeout(() => { hide($('wsIdle')); show($('wsRunning')); }, 300);
+            }, 2200);
+
+            // Phase 2: Running (1.8s)
+            setTimeout(() => {
+                hide($('wsRunning'));
+                show($('wsOk'));
+                $('wsOk').style.transition = 'none';
+                $('wsOk').style.opacity = 0;
+                setTimeout(() => { $('wsOk').style.transition = 'opacity 0.4s'; $('wsOk').style.opacity = 1; }, 20);
+                // Mark current step done
+                const row = $(s.rowId);
+                row.classList.remove('active');
+                row.classList.add('done');
+                row.querySelector('.ws-step-icon').textContent = '✓';
+                $(s.pipId).classList.remove('active');
+                $(s.pipId).classList.add('done');
+            }, 4000);
+
+            // Phase 3: Unlock next step (5s)
+            setTimeout(() => {
+                if (s.nextRowId) {
+                    const nextRow = $(s.nextRowId);
+                    nextRow.classList.remove('locked');
+                    nextRow.classList.add('active', 'unlocking');
+                    nextRow.querySelector('.ws-step-icon').textContent = String(steps.indexOf(s) + 3).padStart(2, '0');
+                    $(s.nextPipId).classList.add('active');
+                }
+            }, 5000);
+        }
+
+        function loop() {
+            const s = steps[stepIdx % steps.length];
+            // If looping back, reset all to initial state
+            if (stepIdx > 0 && stepIdx % steps.length === 0) {
+                // Reset steps 2–4 back to locked
+                ['srow1', 'srow2', 'srow3', 'srow4'].forEach((id, i) => {
+                    const row = $(id);
+                    row.className = 'ws-step-row' + (i === 0 ? ' active' : ' locked');
+                    row.querySelector('.ws-step-icon').textContent = i === 0 ? '02' : '—';
+                });
+                ['pip1', 'pip2', 'pip3', 'pip4'].forEach(id => {
+                    const p = $(id);
+                    p.className = 'ws-prog-pip';
+                    if (id === 'pip1') p.classList.add('active');
+                });
+            }
+            runStep(s);
+            stepIdx++;
+            setTimeout(loop, 6200);
+        }
+
+        setTimeout(loop, 1800);
+
+        // OSS Heart pixel-art animation 16x16
+        const grid = document.getElementById('ossGrid');
+
+        const oldHeart = [
+            11, 12, 17, 18,
+            20, 21, 22, 23, 26, 27, 28, 29,
+            30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+            40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+            51, 52, 53, 54, 55, 56, 57, 58,
+            62, 63, 64, 65, 66, 67,
+            73, 74, 75, 76,
+            84, 85
+        ];
+
+        // Shift heart into the center of a 16x16 grid (offset row +3, col +3)
+        const heartSet = new Set(oldHeart.map(i => {
+            const r = Math.floor(i / 10);
+            const c = i % 10;
+            return (r + 3) * 16 + (c + 3);
+        }));
+
+        for (let i = 0; i < 256; i++) {
+            const b = document.createElement('div');
+            b.className = 'ob';
+            if (heartSet.has(i)) b.classList.add('on');
+            grid.appendChild(b);
+        }
+
+        // BFS to precalculate echo shockwave distances
+        const dists = Array(256).fill(999);
+        const queue = [];
+        for (let i = 0; i < 256; i++) {
+            if (heartSet.has(i)) {
+                dists[i] = 0;
+                queue.push(i);
+            }
+        }
+
+        while (queue.length > 0) {
+            let curr = queue.shift();
+            const r = Math.floor(curr / 16);
+            const c = curr % 16;
+            const neighbors = [
+                [r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1],
+                [r - 1, c - 1], [r - 1, c + 1], [r + 1, c - 1], [r + 1, c + 1]
+            ];
+            for (let [nr, nc] of neighbors) {
+                if (nr >= 0 && nr < 16 && nc >= 0 && nc < 16) {
+                    let nIdx = nr * 16 + nc;
+                    if (dists[nIdx] > dists[curr] + 1) {
+                        dists[nIdx] = dists[curr] + 1;
+                        queue.push(nIdx);
+                    }
+                }
+            }
+        }
+
+        function triggerEcho() {
+            for (let d = 1; d <= 12; d++) {
+                setTimeout(() => {
+                    const nodes = [];
+                    for (let i = 0; i < 256; i++) {
+                        if (dists[i] === d) {
+                            grid.children[i].classList.add('echo');
+                            nodes.push(grid.children[i]);
+                        }
+                    }
+                    setTimeout(() => {
+                        nodes.forEach(n => n.classList.remove('echo'));
+                    }, 450); // Lenta dissolvenza per renderla morbida
+                }, d * 80); // Propagazione più lenta
+            }
+        }
+
+        // Heartbeat "Lub-Dub" animation loop (respiro morbido)
+        setInterval(() => {
+            const onBlocks = grid.querySelectorAll('.on');
+            // First Beat (slow Lub)
+            onBlocks.forEach(b => b.classList.add('pulse'));
+            setTimeout(() => {
+                onBlocks.forEach(b => b.classList.remove('pulse'));
+                // Delay before Dub
+                setTimeout(() => {
+                    onBlocks.forEach(b => b.classList.add('pulse'));
+                    triggerEcho();
+                    setTimeout(() => {
+                        onBlocks.forEach(b => b.classList.remove('pulse'));
+                    }, 350);
+                }, 200);
+            }, 300);
+        }, 3000);
+
+        // --- Hero Background Interactive Grid ---
+        const heroGrid = document.querySelector('.hero-bg-grid');
+        const HERO_CELL_SIZE = 64; // Grandezza quadrati
+
+        function createHeroGrid() {
+            heroGrid.innerHTML = ''; // pulisci i vecchi se ci sono
+            // Ricrea il pseudo-elemento overlay
+            const fakeAfter = document.createElement('div');
+            fakeAfter.style.position = 'absolute';
+            fakeAfter.style.inset = '0';
+            fakeAfter.style.background = 'radial-gradient(ellipse 80% 60% at 50% 40%, transparent 10%, var(--midnight) 75%)';
+            fakeAfter.style.pointerEvents = 'none';
+
+
+            const width = window.innerWidth;
+            const height = document.querySelector('.hero').clientHeight;
+            const cols = Math.ceil(width / HERO_CELL_SIZE);
+            const rows = Math.ceil(height / HERO_CELL_SIZE);
+
+            heroGrid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            heroGrid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+            for (let i = 0; i < cols * rows; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'hero-bg-cell';
+                heroGrid.appendChild(cell);
+            }
+            heroGrid.appendChild(fakeAfter);
+        }
+
+        window.addEventListener('resize', () => {
+            clearTimeout(window.heroGridResizeTimer);
+            window.heroGridResizeTimer = setTimeout(createHeroGrid, 200);
+        });
+
+        // Initializer
+        createHeroGrid();
+
+        // --- Pixel Arrow Canvas Animation ---
+        (function () {
+            const canvas = document.getElementById('pxArrowCanvas');
+            if (!canvas) return;
+            const S = 5;    // pixel size
+            const G = 2;    // gap between pixels
+            const PAD = 10; // padding to prevent glow clipping
+            const COLS = 9;
+            const ROWS = 7;
+            const W = COLS * (S + G) - G;
+            const H = ROWS * (S + G) - G;
+
+            // Canvas is larger than the drawing area to accommodate glow
+            canvas.width = W + PAD * 2;
+            canvas.height = H + PAD * 2;
+            const ctx = canvas.getContext('2d');
+
+            // Arrow shape on a 9x7 grid (col, row) — pointing right
+            const arrowPixels = new Set([
+                // Horizontal bar: row 3, all cols
+                '0,3', '1,3', '2,3', '3,3', '4,3', '5,3', '6,3', '7,3', '8,3',
+                // Upper diagonal (arrowhead): col shifts right as row goes up
+                '6,0', '7,1', '8,2',
+                // Lower diagonal (arrowhead): col shifts right as row goes down
+                '8,4', '7,5', '6,6'
+            ]);
+
+            const ECHO_DUR = 400; // ms for echo to fade
+
+            // Per-column state: bright (0-1) and echo start timestamp
+            const state = {};
+            for (let c = 0; c < COLS; c++) state[c] = { bright: 0, echo: 0 };
+
+            function draw(ts) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let row = 0; row < ROWS; row++) {
+                    for (let col = 0; col < COLS; col++) {
+                        if (!arrowPixels.has(`${col},${row}`)) continue; // skip — no background grid dot
+
+                        const s = state[col];
+                        const echoFade = s.echo > 0 ? Math.max(0, 1 - (ts - s.echo) / ECHO_DUR) : 0;
+                        const bright = Math.max(s.bright, echoFade * 0.7);
+
+                        if (bright < 0.01) continue; // pixel invisible — don't draw
+
+                        const x = PAD + col * (S + G);
+                        const y = PAD + row * (S + G);
+
+                        const alpha = bright * 0.95;
+                        ctx.fillStyle = `rgba(0,194,160,${alpha.toFixed(3)})`;
+
+                        // Draw with glow
+                        ctx.shadowColor = `rgba(0,194,160,${(bright * 0.9).toFixed(2)})`;
+                        ctx.shadowBlur = 8;
+                        ctx.beginPath();
+                        ctx.roundRect(x, y, S, S, 1);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+
+                requestAnimationFrame(draw);
+            }
+            requestAnimationFrame(draw);
+
+            // Sweep: illuminate each column left→right, then echo-fade
+            function sweep() {
+                let col = 0;
+                const tick = setInterval(() => {
+                    if (col >= COLS) { clearInterval(tick); return; }
+                    const s = state[col];
+                    s.bright = 1;
+                    s.echo = 0;
+                    setTimeout(() => {
+                        s.bright = 0;
+                        s.echo = performance.now();
+                        setTimeout(() => { s.echo = 0; }, ECHO_DUR + 50);
+                    }, 110);
+                    col++;
+                }, 65);
+            }
+
+            sweep();
+            setInterval(sweep, 2000);
+        })();
+
+    </script>
+</body>
+
+</html>

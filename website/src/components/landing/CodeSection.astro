@@ -1,0 +1,130 @@
+---
+const codeFeatures = [
+  {
+    title: 'Steps are just functions',
+    desc: 'Each Check.Run is a plain Go func() (bool, error). Test them in isolation, compose them freely.',
+  },
+  {
+    title: 'Validators are composable',
+    desc: 'Combine FileExists, EnvVarSet, CommandSucceeds and more from the checks sub-package — or write your own.',
+  },
+  {
+    title: 'One command to build',
+    desc: 'worky build produces a fully self-contained binary. Participants need nothing installed.',
+  },
+];
+---
+<section class="code-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-label">The API</div>
+      <h2 class="sec-title">Minimal surface.<br />Maximum control.</h2>
+      <p class="sec-sub">The entire workshop runtime is configured in one New() call. No YAML, no DSL, just Go.</p>
+    </div>
+
+    <div class="code-inner reveal">
+      <!-- Code block -->
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-bar-dots">
+            <span style="width:10px;height:10px;border-radius:50%;background:#FF5F56;display:block;"></span>
+            <span style="width:10px;height:10px;border-radius:50%;background:#FFBD2E;display:block;"></span>
+            <span style="width:10px;height:10px;border-radius:50%;background:#27C93F;display:block;"></span>
+          </div>
+          <span class="code-filename">main.go</span>
+          <span class="code-lang">Go</span>
+        </div>
+        <div class="code-content">
+          <span class="cf">worky</span><span class="cw">.</span><span class="cf">New</span><span class="cw">(</span><span class="cf">worky</span><span class="cw">.</span><span class="ct">Config</span><span class="cw">{"{"}</span><br/>
+          &nbsp;&nbsp;<span class="ct">Name</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cs">"My Workshop"</span><span class="cw">,</span><br/>
+          &nbsp;&nbsp;<span class="ct">Port</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cc">7331</span><span class="cw">,</span><br/>
+          &nbsp;&nbsp;<span class="ct">Chapters</span><span class="cw">: []</span><span class="cf">worky</span><span class="cw">.</span><span class="ct">Chapter</span><span class="cw">{"{"}</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">{"{"}</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">ID</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cs">"00"</span><span class="cw">,</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">Name</span><span class="cw">:</span>&nbsp;&nbsp;&nbsp;<span class="cs">"Setup"</span><span class="cw">,</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ct">Checks</span><span class="cw">: []</span><span class="cf">worky</span><span class="cw">.</span><span class="ct">Check</span><span class="cw">{"{"}</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">{"{"}</span><span class="ct">Run</span><span class="cw">:</span> <span class="cf">checks</span><span class="cw">.</span><span class="cf">FileExists</span><span class="cw">(</span><span class="cs">"done.txt"</span><span class="cw">){"}"}</span><span class="cw">,</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">&#125;,</span><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="cw">&#125;,</span><br/>
+          &nbsp;&nbsp;<span class="cw">&#125;,</span><br/>
+          <span class="cw">}).</span><span class="cf">Run</span><span class="cw">()</span>
+        </div>
+      </div>
+
+      <!-- Feature list -->
+      <div class="code-feats">
+        {codeFeatures.map(f => (
+          <div class="code-feat">
+            <div class="cf-dot"></div>
+            <div>
+              <div class="cf-title">{f.title}</div>
+              <div class="cf-desc">{f.desc}</div>
+            </div>
+          </div>
+        ))}
+        <a href="/docs/getting-started/" class="docs-cta">
+          Read the docs
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .code-section { background: #071122; padding: 140px 0; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  .sec-label {
+    font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--teal);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sec-label::before { content: ''; display: block; width: 16px; height: 1px; background: var(--teal); }
+  .sec-title { font-size: clamp(26px, 2.8vw, 38px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: #fff; margin: 0 0 14px; }
+  .sec-sub { font-size: 17px; color: rgba(255,255,255,0.45); line-height: 1.65; max-width: 520px; margin: 0; }
+
+  .code-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; margin-top: 52px; }
+
+  .code-block { background: #071122; border: 0.5px solid rgba(255,255,255,0.07); border-radius: 10px; overflow: hidden; }
+  .code-bar { background: #0A1628; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 0.5px solid rgba(255,255,255,0.06); }
+  .code-bar-dots { display: flex; gap: 6px; }
+  .code-filename { font-family: var(--mono); font-size: 11px; color: rgba(255,255,255,0.28); margin-left: 4px; }
+  .code-lang { margin-left: auto; font-family: var(--mono); font-size: 10px; background: rgba(0,194,160,0.14); color: var(--teal); padding: 2px 8px; border-radius: 3px; letter-spacing: 0.04em; }
+  .code-content { padding: 20px; font-family: var(--mono); font-size: 12.5px; line-height: 1.88; }
+  .ck { color: #C678DD; } .cf { color: #61AFEF; } .cs { color: #98C379; }
+  .co { color: rgba(255,255,255,0.25); } .ct { color: #E5C07B; }
+  .cw { color: rgba(255,255,255,0.88); } .cc { color: var(--teal); }
+
+  .code-feats { display: flex; flex-direction: column; gap: 22px; }
+  .code-feat {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 12px 16px; margin-left: -16px;
+    border: 0.5px solid transparent; border-radius: 10px;
+    transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    cursor: default;
+  }
+  .code-feat:hover { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.06); transform: translateX(8px); }
+  .code-feat:hover .cf-dot { box-shadow: 0 0 10px rgba(0,194,160,0.8); transform: scale(1.3); }
+
+  .cf-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; margin-top: 7px; flex-shrink: 0; transition: all 0.3s ease; }
+  .cf-title { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+  .cf-desc { font-size: 13px; color: rgba(255,255,255,0.42); line-height: 1.62; }
+
+  .docs-cta {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--teal);
+    display: inline-flex; align-items: center; gap: 6px;
+    text-decoration: none;
+    border-bottom: 0.5px solid rgba(0,194,160,0.3);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+  .docs-cta:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+  @media (max-width: 768px) { .code-inner { grid-template-columns: 1fr; gap: 40px; } }
+</style>

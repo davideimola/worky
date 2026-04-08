@@ -1,4 +1,8 @@
-public/
-resources/
-_vendor/
-.hugo_build.lock
+dist/
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+.astro/
+.vercel/

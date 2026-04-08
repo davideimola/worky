@@ -1,0 +1,163 @@
+---
+const steps = [
+  {
+    num: '01 — Create',
+    title: 'Write your workshop',
+    desc: 'Use the Worky Go library to define steps, instructions, and automatic validators. Each step can check if the participant completed the task before unlocking the next one.',
+    code: 'import "github.com/davideimola/worky"',
+    icon: `<svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+      <rect x="0" y="0" width="5" height="5" fill="#00C2A0"/><rect x="7" y="0" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="0" width="5" height="5" fill="#00C2A0"/><rect x="21" y="0" width="5" height="5" fill="#00C2A0"/>
+      <rect x="28" y="0" width="5" height="5" fill="#00C2A0"/><rect x="35" y="0" width="5" height="5" fill="#00C2A0"/>
+      <rect x="42" y="0" width="5" height="5" fill="#00C2A0"/>
+      <rect x="0" y="7" width="5" height="5" fill="#00C2A0"/><rect x="42" y="7" width="5" height="5" fill="#00C2A0"/>
+      <rect x="0" y="14" width="5" height="5" fill="#00C2A0"/><rect x="7" y="14" width="5" height="5" fill="#00C2A0"/>
+      <rect x="42" y="14" width="5" height="5" fill="#00C2A0"/>
+      <rect x="0" y="21" width="5" height="5" fill="#00C2A0"/><rect x="14" y="21" width="5" height="5" fill="#00C2A0"/>
+      <rect x="42" y="21" width="5" height="5" fill="#00C2A0"/>
+      <rect x="0" y="28" width="5" height="5" fill="#00C2A0"/><rect x="7" y="28" width="5" height="5" fill="#00C2A0"/>
+      <rect x="21" y="28" width="5" height="5" fill="#00C2A0"/><rect x="28" y="28" width="5" height="5" fill="#00C2A0"/>
+      <rect x="42" y="28" width="5" height="5" fill="#00C2A0"/>
+      <rect x="0" y="35" width="5" height="5" fill="#00C2A0"/><rect x="42" y="35" width="5" height="5" fill="#00C2A0"/>
+      <rect x="0" y="42" width="5" height="5" fill="#00C2A0"/><rect x="7" y="42" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="42" width="5" height="5" fill="#00C2A0"/><rect x="21" y="42" width="5" height="5" fill="#00C2A0"/>
+      <rect x="28" y="42" width="5" height="5" fill="#00C2A0"/><rect x="35" y="42" width="5" height="5" fill="#00C2A0"/>
+      <rect x="42" y="42" width="5" height="5" fill="#00C2A0"/>
+    </svg>`,
+  },
+  {
+    num: '02 — Build',
+    title: 'Compile to one binary',
+    desc: 'Run worky build and get a single executable. Everything bundled — UI, content, validators. Nothing to install on the participant\'s machine.',
+    code: 'worky build',
+    icon: `<svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+      <rect x="14" y="14" width="5" height="5" fill="#00C2A0"/><rect x="21" y="14" width="5" height="5" fill="#00C2A0"/>
+      <rect x="28" y="14" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="21" width="5" height="5" fill="#00C2A0"/><rect x="21" y="21" width="5" height="5" fill="#00C2A0"/>
+      <rect x="28" y="21" width="5" height="5" fill="#00C2A0"/>
+      <rect x="0" y="35" width="5" height="5" fill="#00C2A0"/><rect x="7" y="35" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="35" width="5" height="5" fill="#00C2A0"/>
+      <rect x="0" y="42" width="5" height="5" fill="#00C2A0"/><rect x="7" y="42" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="42" width="5" height="5" fill="#00C2A0"/>
+      <rect x="28" y="35" width="5" height="5" fill="#00C2A0"/><rect x="35" y="35" width="5" height="5" fill="#00C2A0"/>
+      <rect x="42" y="35" width="5" height="5" fill="#00C2A0"/>
+      <rect x="28" y="42" width="5" height="5" fill="#00C2A0"/><rect x="35" y="42" width="5" height="5" fill="#00C2A0"/>
+      <rect x="42" y="42" width="5" height="5" fill="#00C2A0"/>
+    </svg>`,
+  },
+  {
+    num: '03 — Distribute',
+    title: 'Participants just run it',
+    desc: 'Share the file. Participants download it, run one command, and their browser opens a guided interface. Step-by-step instructions, automatic validation, zero setup.',
+    code: '$ ./my-workshop serve',
+    icon: `<svg viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+      <rect x="14" y="0" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="7" width="5" height="5" fill="#00C2A0"/><rect x="21" y="7" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="14" width="5" height="5" fill="#00C2A0"/><rect x="21" y="14" width="5" height="5" fill="#00C2A0"/>
+      <rect x="28" y="14" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="21" width="5" height="5" fill="#00C2A0"/><rect x="21" y="21" width="5" height="5" fill="#00C2A0"/>
+      <rect x="28" y="21" width="5" height="5" fill="#00C2A0"/><rect x="35" y="21" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="28" width="5" height="5" fill="#00C2A0"/><rect x="21" y="28" width="5" height="5" fill="#00C2A0"/>
+      <rect x="28" y="28" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="35" width="5" height="5" fill="#00C2A0"/><rect x="21" y="35" width="5" height="5" fill="#00C2A0"/>
+      <rect x="14" y="42" width="5" height="5" fill="#00C2A0"/>
+    </svg>`,
+  },
+];
+---
+<section class="how-section" id="how">
+  <div class="container">
+    <div class="how-header reveal">
+      <div class="sec-label">How it works</div>
+      <h2 class="sec-title">From code to classroom<br />in three steps.</h2>
+      <p class="sec-sub">Worky handles distribution so you can focus on teaching.</p>
+    </div>
+    <div class="steps-grid reveal">
+      {steps.map(step => (
+        <div class="step-card">
+          <span class="step-num">{step.num}</span>
+          <div class="step-icon" set:html={step.icon} />
+          <h3 class="step-title">{step.title}</h3>
+          <p class="step-desc">{step.desc}</p>
+          <span class="step-code">{step.code}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .how-section { background: var(--surface); padding: 140px 0; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  .sec-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--teal);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sec-label::before { content: ''; display: block; width: 16px; height: 1px; background: var(--teal); }
+  .sec-title { font-size: clamp(26px, 2.8vw, 38px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: rgba(255,255,255,0.92); margin: 0 0 14px; }
+  .sec-sub { font-size: 17px; color: var(--slate); line-height: 1.65; max-width: 520px; margin: 0; }
+
+  .how-header { margin-bottom: 56px; }
+
+  .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+
+  .step-card {
+    background: #112035;
+    border: 0.5px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 32px 28px;
+    transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    cursor: default;
+  }
+  .step-card:hover {
+    border-color: rgba(0,194,160,0.45);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,194,160,0.1) inset;
+  }
+  .step-card:hover .step-icon { background: rgba(0,194,160,0.18); }
+  .step-card:hover .step-icon :global(svg rect) { animation: pixelOn 0.42s ease-out both; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(1))  { animation-delay: 0ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(2))  { animation-delay: 25ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(3))  { animation-delay: 50ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(4))  { animation-delay: 75ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(5))  { animation-delay: 100ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(6))  { animation-delay: 125ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(7))  { animation-delay: 150ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(8))  { animation-delay: 175ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(9))  { animation-delay: 200ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(10)) { animation-delay: 225ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(11)) { animation-delay: 250ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(12)) { animation-delay: 275ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(13)) { animation-delay: 300ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(14)) { animation-delay: 325ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(15)) { animation-delay: 350ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(16)) { animation-delay: 375ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(17)) { animation-delay: 400ms; }
+  .step-card:hover .step-icon :global(svg rect:nth-child(18)) { animation-delay: 425ms; }
+
+  .step-num { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--teal); letter-spacing: 0.06em; margin-bottom: 18px; display: block; }
+  .step-icon {
+    width: 72px; height: 72px;
+    background: var(--teal-ghost);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 14px;
+    transition: background 0.25s ease;
+  }
+  .step-icon :global(svg) { width: 100%; height: 100%; }
+  .step-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: rgba(255,255,255,0.90); margin: 0 0 10px; }
+  .step-desc { font-size: 14px; color: var(--slate); line-height: 1.65; margin: 0 0 14px; }
+  .step-code { font-family: var(--mono); font-size: 12px; background: rgba(255,255,255,0.06); padding: 7px 11px; border-radius: 5px; color: var(--teal); display: inline-block; border: 0.5px solid rgba(255,255,255,0.08); }
+
+  @media (max-width: 768px) { .steps-grid { grid-template-columns: 1fr; } }
+</style>
