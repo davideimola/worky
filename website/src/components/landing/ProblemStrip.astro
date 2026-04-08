@@ -12,23 +12,9 @@
       </div>
     </div>
 
-    <!-- Pixel arrow -->
+    <!-- Pixel arrow (canvas, matches reference) -->
     <div class="friction-arrow">
-      <svg id="pixelArrow" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
-        <!-- shaft: pixels 0–6 (left to right), tip: 3 pixels forming arrowhead -->
-        <rect class="ap ap0" x="0"  y="14" width="4" height="4" fill="rgba(0,194,160,0.35)" />
-        <rect class="ap ap1" x="4"  y="14" width="4" height="4" fill="rgba(0,194,160,0.45)" />
-        <rect class="ap ap2" x="8"  y="14" width="4" height="4" fill="rgba(0,194,160,0.55)" />
-        <rect class="ap ap3" x="12" y="14" width="4" height="4" fill="rgba(0,194,160,0.65)" />
-        <rect class="ap ap4" x="16" y="14" width="4" height="4" fill="rgba(0,194,160,0.75)" />
-        <rect class="ap ap5" x="20" y="14" width="4" height="4" fill="rgba(0,194,160,0.85)" />
-        <rect class="ap ap6" x="24" y="14" width="4" height="4" fill="var(--teal)" />
-        <rect class="ap ap7" x="20" y="10" width="4" height="4" fill="rgba(0,194,160,0.6)" />
-        <rect class="ap ap8" x="24" y="10" width="4" height="4" fill="var(--teal)" />
-        <rect class="ap ap9" x="28" y="14" width="4" height="4" fill="var(--teal)" />
-        <rect class="ap ap10" x="20" y="18" width="4" height="4" fill="rgba(0,194,160,0.6)" />
-        <rect class="ap ap11" x="24" y="18" width="4" height="4" fill="var(--teal)" />
-      </svg>
+      <canvas id="pxArrowCanvas"></canvas>
     </div>
 
     <div class="friction-card after">
@@ -101,39 +87,81 @@
   .fc-body s { text-decoration-color: rgba(255,255,255,0.2); }
 
   .friction-arrow { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  #pxArrowCanvas { display: block; image-rendering: pixelated; }
 
   @media (max-width: 768px) {
     .problem-inner { flex-direction: column; }
-    .friction-arrow { transform: rotate(90deg); }
+    .friction-arrow { transform: rotate(90deg); margin: 8px 0; }
   }
 </style>
 
 <script>
-  import gsap from 'gsap';
+  const canvas = document.getElementById('pxArrowCanvas') as HTMLCanvasElement | null;
+  if (canvas) {
+    const S = 5;      // pixel size
+    const G = 2;      // gap
+    const PAD = 10;   // padding for glow not to clip
+    const COLS = 9;
+    const ROWS = 7;
+    const W = COLS * (S + G) - G;
+    const H = ROWS * (S + G) - G;
+    canvas.width  = W + PAD * 2;
+    canvas.height = H + PAD * 2;
+    const ctx = canvas.getContext('2d')!;
 
-  // Shaft pixels left→right (indices 0–6), then arrowhead pixels (7–11)
-  // Animation: each pixel pulses to full opacity then fades back, creating
-  // a "marching" light that travels from tail to tip in a loop.
-  const shaft  = [0,1,2,3,4,5,6];
-  const head   = [7,8,9,10,11];
-  const pixels = [...shaft, ...head].map(i =>
-    document.querySelector<SVGRectElement>(`.ap${i}`)
-  ).filter(Boolean) as SVGRectElement[];
+    // 9×7 arrow pointing right: horizontal bar row 3 + diagonal arrowhead
+    const arrowPixels = new Set([
+      '0,3','1,3','2,3','3,3','4,3','5,3','6,3','7,3','8,3',
+      '6,0','7,1','8,2',
+      '8,4','7,5','6,6',
+    ]);
 
-  const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.2, defaults: { ease: 'power1.inOut' } });
+    const ECHO_DUR = 400;
+    const state: Record<number, { bright: number; echo: number }> = {};
+    for (let c = 0; c < COLS; c++) state[c] = { bright: 0, echo: 0 };
 
-  // Shaft: light travels pixel by pixel (each 0.07s apart, 0.18s duration)
-  shaft.forEach((_, i) => {
-    tl.to(pixels[i], { opacity: 1, duration: 0.18 }, i * 0.07)
-      .to(pixels[i], { opacity: 0.3, duration: 0.18 }, i * 0.07 + 0.22);
-  });
+    function draw(ts: number) {
+      ctx.clearRect(0, 0, canvas!.width, canvas!.height);
+      for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          if (!arrowPixels.has(`${col},${row}`)) continue;
+          const s = state[col];
+          const echoFade = s.echo > 0 ? Math.max(0, 1 - (ts - s.echo) / ECHO_DUR) : 0;
+          const bright = Math.max(s.bright, echoFade * 0.7);
+          if (bright < 0.01) continue;
+          const x = PAD + col * (S + G);
+          const y = PAD + row * (S + G);
+          ctx.fillStyle = `rgba(0,194,160,${(bright * 0.95).toFixed(3)})`;
+          ctx.shadowColor = `rgba(0,194,160,${(bright * 0.9).toFixed(2)})`;
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.roundRect(x, y, S, S, 1);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
 
-  // Arrowhead: all 3 tip groups flash together at the end of the shaft wave
-  const tipStart = shaft.length * 0.07 + 0.05;
-  tl.to([pixels[7], pixels[8], pixels[9], pixels[10], pixels[11]], {
-    opacity: 1, duration: 0.15,
-  }, tipStart)
-  .to([pixels[7], pixels[8], pixels[9], pixels[10], pixels[11]], {
-    opacity: 0.6, duration: 0.2,
-  }, tipStart + 0.2);
+    // Sweep: illuminate each column left→right then echo-fade
+    function sweep() {
+      let col = 0;
+      const tick = setInterval(() => {
+        if (col >= COLS) { clearInterval(tick); return; }
+        const s = state[col];
+        s.bright = 1;
+        s.echo = 0;
+        setTimeout(() => {
+          s.bright = 0;
+          s.echo = performance.now();
+          setTimeout(() => { s.echo = 0; }, ECHO_DUR + 50);
+        }, 110);
+        col++;
+      }, 65);
+    }
+
+    sweep();
+    setInterval(sweep, 2000);
+  }
 </script>
