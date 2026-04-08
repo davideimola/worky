@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="./website/public/logo.svg" width="120" alt="worky" />
+  <img src="./website/public/logo.svg" width="180" alt="worky" />
 </p>
-
-<h1 align="center">worky</h1>
 
 <p align="center">A Go library for building interactive, self-contained workshop tools.</p>
 
