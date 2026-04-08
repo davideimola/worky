@@ -9,7 +9,7 @@ export default defineConfig({
   adapter: vercel(),
   integrations: [
     starlight({
-      title: 'Worky',
+      title: 'Docs',
       description: 'Build self-contained interactive workshops as a single Go binary.',
       logo: {
         src: './public/logo.svg',
