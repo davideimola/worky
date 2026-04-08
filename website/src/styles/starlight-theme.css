@@ -122,24 +122,43 @@ starlight-theme-select,
 }
 
 /* ─── Navbar ─── */
+
+/* Logo: scale down and vertically center */
+.site-title img,
+header .site-title img {
+  height: 22px !important;
+  width: auto !important;
+}
+
+/* DOCS badge */
 .site-title {
   font-family: var(--font-mono);
   font-weight: 500;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-teal) !important;
   background: rgba(0, 194, 160, 0.10);
   border: 0.5px solid rgba(0, 194, 160, 0.25);
   border-radius: 4px;
-  padding: 3px 8px;
+  padding: 2px 7px;
   align-self: center;
 }
 
 header.header {
-  background: rgba(14, 31, 58, 0.97) !important;
+  --sl-nav-height: 3rem;
+  background: rgba(7, 17, 34, 0.97) !important;
   backdrop-filter: blur(12px);
+  border-top: none !important;
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+/* Remove Starlight's default top accent stripe (::before pseudo-element) */
+header.header::before,
+.header::before {
+  display: none !important;
+  content: none !important;
 }
 
 /* ─── Sidebar ─── */
