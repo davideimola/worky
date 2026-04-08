@@ -1,5 +1,7 @@
 # Worky Design System
 
+> Design by [Fabrizio Lamanna](https://www.linkedin.com/in/fabrizio-lamanna/).
+
 This document is the single source of truth for Worky's visual identity.
 Use it when implementing styled CLI output, TUI components, or any new UI surface.
 
