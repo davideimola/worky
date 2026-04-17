@@ -29,7 +29,7 @@ jobs:
           cache-dependency-path: website/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install ${{ github.event_name == 'push' && '--frozen-lockfile' || '' }}
 
       - name: Build
         run: pnpm build
