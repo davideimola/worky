@@ -10,8 +10,6 @@ updates:
     labels:
       - dependencies
       - go
-    reviewers:
-      - davideimola
     commit-message:
       prefix: "chore(deps)"
     groups:
@@ -28,8 +26,6 @@ updates:
     labels:
       - dependencies
       - javascript
-    reviewers:
-      - davideimola
     commit-message:
       prefix: "chore(deps)"
     groups:
@@ -59,8 +55,6 @@ updates:
     labels:
       - dependencies
       - github-actions
-    reviewers:
-      - davideimola
     commit-message:
       prefix: "chore(deps)"
     groups:
