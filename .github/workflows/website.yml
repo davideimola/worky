@@ -20,22 +20,23 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Debug lockfile after checkout
+        working-directory: ${{ github.workspace }}
         run: |
-          echo "=== after checkout ==="
+          echo "=== commit ==="
+          git log --oneline -1
+          echo "=== git content (first 3 lines) ==="
+          git show HEAD:website/pnpm-lock.yaml | head -3
+          echo "=== disk content (first 3 lines) ==="
           head -3 website/pnpm-lock.yaml
+          echo "=== sizes ==="
+          git show HEAD:website/pnpm-lock.yaml | wc -c
           wc -c website/pnpm-lock.yaml
+          echo "=== --- count on disk ==="
           grep -c "^---" website/pnpm-lock.yaml || true
 
       - uses: pnpm/action-setup@v6
         with:
           version: 10.32.1
-
-      - name: Debug lockfile after pnpm setup
-        run: |
-          echo "=== after pnpm/action-setup ==="
-          head -3 website/pnpm-lock.yaml
-          wc -c website/pnpm-lock.yaml
-          grep -c "^---" website/pnpm-lock.yaml || true
 
       - uses: actions/setup-node@v6
         with:
@@ -43,15 +44,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: website/pnpm-lock.yaml
 
-      - name: Debug lockfile after node setup
-        run: |
-          echo "=== after actions/setup-node ==="
-          head -3 website/pnpm-lock.yaml
-          wc -c website/pnpm-lock.yaml
-          grep -c "^---" website/pnpm-lock.yaml || true
-
       - name: Install dependencies
-        working-directory: website
         run: pnpm install --frozen-lockfile
 
       - name: Build
