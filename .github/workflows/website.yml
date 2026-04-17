@@ -19,23 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Debug lockfile
-        working-directory: ${{ github.workspace }}
-        run: |
-          node -e "
-          const fs = require('fs');
-          const content = fs.readFileSync('website/pnpm-lock.yaml', 'utf8');
-          const bom = content.charCodeAt(0) === 0xFEFF;
-          const docSeps = (content.match(/^---/gm) || []).length;
-          const docEnds = (content.match(/^\.\.\.$/gm) || []).length;
-          console.log('BOM:', bom);
-          console.log('--- separators:', docSeps);
-          console.log('... end markers:', docEnds);
-          console.log('bytes:', Buffer.byteLength(content, 'utf8'));
-          console.log('first 80 chars:', JSON.stringify(content.slice(0, 80)));
-          "
-          pnpm --version
-
       - uses: pnpm/action-setup@v6
         with:
           version: 10.32.1
