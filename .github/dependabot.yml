@@ -1,0 +1,69 @@
+version: 2
+
+updates:
+  # Dipendenze Go - modulo principale
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - go
+    reviewers:
+      - davideimola
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      go-deps:
+        patterns:
+          - "*"
+
+  # Dipendenze npm/pnpm - sito web
+  - package-ecosystem: npm
+    directory: /website
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - javascript
+    reviewers:
+      - davideimola
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      types:
+        patterns:
+          - "@types/*"
+        exclude-patterns:
+          - "@types/react"
+          - "@types/react-dom"
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - github-actions
+    reviewers:
+      - davideimola
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
