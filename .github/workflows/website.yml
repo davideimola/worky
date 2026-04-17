@@ -19,20 +19,22 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Debug lockfile after checkout
+      - name: Debug lockfile
         working-directory: ${{ github.workspace }}
         run: |
-          echo "=== commit ==="
-          git log --oneline -1
-          echo "=== git content (first 3 lines) ==="
-          git show HEAD:website/pnpm-lock.yaml | head -3
-          echo "=== disk content (first 3 lines) ==="
-          head -3 website/pnpm-lock.yaml
-          echo "=== sizes ==="
-          git show HEAD:website/pnpm-lock.yaml | wc -c
-          wc -c website/pnpm-lock.yaml
-          echo "=== --- count on disk ==="
-          grep -c "^---" website/pnpm-lock.yaml || true
+          node -e "
+          const fs = require('fs');
+          const content = fs.readFileSync('website/pnpm-lock.yaml', 'utf8');
+          const bom = content.charCodeAt(0) === 0xFEFF;
+          const docSeps = (content.match(/^---/gm) || []).length;
+          const docEnds = (content.match(/^\.\.\.$/gm) || []).length;
+          console.log('BOM:', bom);
+          console.log('--- separators:', docSeps);
+          console.log('... end markers:', docEnds);
+          console.log('bytes:', Buffer.byteLength(content, 'utf8'));
+          console.log('first 80 chars:', JSON.stringify(content.slice(0, 80)));
+          "
+          pnpm --version
 
       - uses: pnpm/action-setup@v6
         with:
