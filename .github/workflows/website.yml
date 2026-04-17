@@ -29,8 +29,16 @@ jobs:
           cache: pnpm
           cache-dependency-path: website/pnpm-lock.yaml
 
+      - name: Debug environment
+        run: |
+          pnpm --version
+          node --version
+          head -3 pnpm-lock.yaml
+          wc -c pnpm-lock.yaml
+          grep -c "^---" pnpm-lock.yaml || true
+
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         run: pnpm build
