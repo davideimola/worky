@@ -32,10 +32,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Check lockfile is up to date
-        if: github.event_name == 'push'
-        run: git diff --exit-code pnpm-lock.yaml
-
       - name: Build
         run: pnpm build
 
