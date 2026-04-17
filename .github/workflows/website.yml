@@ -6,6 +6,7 @@ on:
     paths: [website/**]
   pull_request:
     paths: [website/**]
+  workflow_dispatch:
 
 jobs:
   build:
