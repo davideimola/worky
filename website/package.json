@@ -15,7 +15,7 @@
     "@astrojs/sitemap": "3.7.2",
     "@astrojs/starlight": "0.38.3",
     "@astrojs/vercel": "10.0.4",
-    "@vercel/analytics": "1.6.1",
+    "@vercel/analytics": "2.0.1",
     "astro": "6.1.7",
     "autoprefixer": "10.4.21",
     "class-variance-authority": "0.7.1",
