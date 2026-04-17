@@ -21,8 +21,8 @@ importers:
         specifier: 10.0.4
         version: 10.0.4(astro@6.1.7(@types/node@24.12.2)(@vercel/functions@3.4.3)(jiti@1.21.7)(rollup@4.60.1)(typescript@6.0.2)(yaml@2.8.3))(react@19.2.5)(rollup@4.60.1)
       '@vercel/analytics':
-        specifier: 1.6.1
-        version: 1.6.1(react@19.2.5)
+        specifier: 2.0.1
+        version: 2.0.1(react@19.2.5)
       astro:
         specifier: 6.1.7
         version: 6.1.7(@types/node@24.12.2)(@vercel/functions@3.4.3)(jiti@1.21.7)(rollup@4.60.1)(typescript@6.0.2)(yaml@2.8.3)
@@ -952,6 +952,35 @@ packages:
       '@sveltejs/kit':
         optional: true
       next:
+        optional: true
+      react:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+      vue-router:
+        optional: true
+
+  '@vercel/analytics@2.0.1':
+    resolution: {integrity: sha512-MTQG6V9qQrt1tsDeF+2Uoo5aPjqbVPys1xvnIftXSJYG2SrwXRHnqEvVoYID7BTruDz4lCd2Z7rM1BdkUehk2g==}
+    peerDependencies:
+      '@remix-run/react': ^2
+      '@sveltejs/kit': ^1 || ^2
+      next: '>= 13'
+      nuxt: '>= 3'
+      react: ^18 || ^19 || ^19.0.0-rc
+      svelte: '>= 4'
+      vue: ^3
+      vue-router: ^4
+    peerDependenciesMeta:
+      '@remix-run/react':
+        optional: true
+      '@sveltejs/kit':
+        optional: true
+      next:
+        optional: true
+      nuxt:
         optional: true
       react:
         optional: true
@@ -3658,6 +3687,10 @@ snapshots:
   '@ungap/structured-clone@1.3.0': {}
 
   '@vercel/analytics@1.6.1(react@19.2.5)':
+    optionalDependencies:
+      react: 19.2.5
+
+  '@vercel/analytics@2.0.1(react@19.2.5)':
     optionalDependencies:
       react: 19.2.5
 
