@@ -16,7 +16,7 @@
     "@astrojs/starlight": "0.38.3",
     "@astrojs/vercel": "10.0.4",
     "@vercel/analytics": "2.0.1",
-    "astro": "6.1.7",
+    "astro": "6.1.8",
     "autoprefixer": "10.4.21",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
