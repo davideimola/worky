@@ -54,8 +54,8 @@ importers:
         specifier: 0.34.5
         version: 0.34.5
       tailwind-merge:
-        specifier: 3.3.0
-        version: 3.3.0
+        specifier: 3.5.0
+        version: 3.5.0
       tailwindcss:
         specifier: 3.4.17
         version: 3.4.17
@@ -2380,8 +2380,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  tailwind-merge@3.3.0:
-    resolution: {integrity: sha512-fyW/pEfcQSiigd5SNn0nApUOxx0zB/dm6UDU/rEwc2c3sX2smWUNbapHv+QRqLGVp9GWX3THIa7MUGPo+YkDzQ==}
+  tailwind-merge@3.5.0:
+    resolution: {integrity: sha512-I8K9wewnVDkL1NTGoqWmVEIlUcB9gFriAEkXkfCjX5ib8ezGxtR3xD7iZIxrfArjEsH7F1CHD4RFUtxefdqV/A==}
 
   tailwindcss@3.4.17:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
@@ -5690,7 +5690,7 @@ snapshots:
       picocolors: 1.1.1
       sax: 1.6.0
 
-  tailwind-merge@3.3.0: {}
+  tailwind-merge@3.5.0: {}
 
   tailwindcss@3.4.17:
     dependencies:
