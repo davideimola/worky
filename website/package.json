@@ -23,15 +23,15 @@
     "gsap": "3.15.0",
     "lucide-react": "0.511.0",
     "postcss": "8.5.15",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
     "sharp": "0.34.5",
     "tailwind-merge": "3.6.0",
     "tailwindcss": "3.4.17"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
-    "@types/react": "19.2.15",
+    "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "typescript": "6.0.3"
   }
