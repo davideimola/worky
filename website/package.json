@@ -13,10 +13,10 @@
   "dependencies": {
     "@astrojs/react": "5.0.7",
     "@astrojs/sitemap": "3.7.3",
-    "@astrojs/starlight": "0.39.3",
+    "@astrojs/starlight": "0.40.0",
     "@astrojs/vercel": "10.0.8",
     "@vercel/analytics": "2.0.1",
-    "astro": "6.4.4",
+    "astro": "6.4.7",
     "autoprefixer": "10.5.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
